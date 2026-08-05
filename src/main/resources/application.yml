@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: wishlist-api
+  datasource:
+    url: jdbc:h2:mem:wishlist;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+
+jwt:
+  secret: "wishlist-carvajal-super-secret-key-2026-change-me-in-production"
+  expiration-ms: 86400000
+
+app:
+  cors:
+    allowed-origins: "http://localhost:4200"
