@@ -3,15 +3,15 @@ package com.carvajal.wishlist.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.carvajal.wishlist.dto.history.WishlistHistoryResponse;
+import com.carvajal.wishlist.security.SecurityUtils;
 import com.carvajal.wishlist.service.WishlistHistoryService;
 
 @RestController
-@RequestMapping("/api/users/{userId}/wishlist/history")
+@RequestMapping("/api/wishlist/history")
 public class WishlistHistoryController {
 
     private final WishlistHistoryService wishlistHistoryService;
@@ -21,7 +21,7 @@ public class WishlistHistoryController {
     }
 
     @GetMapping
-    public List<WishlistHistoryResponse> list(@PathVariable Long userId) {
-        return wishlistHistoryService.listByUser(userId);
+    public List<WishlistHistoryResponse> list() {
+        return wishlistHistoryService.listByUser(SecurityUtils.getCurrentUserId());
     }
 }

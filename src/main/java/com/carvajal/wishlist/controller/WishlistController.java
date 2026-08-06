@@ -16,12 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.carvajal.wishlist.dto.wishlist.WishlistItemRequest;
 import com.carvajal.wishlist.dto.wishlist.WishlistItemResponse;
 import com.carvajal.wishlist.dto.wishlist.WishlistItemUpdateRequest;
+import com.carvajal.wishlist.security.SecurityUtils;
 import com.carvajal.wishlist.service.WishlistService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/users/{userId}/wishlist")
+@RequestMapping("/api/wishlist")
 public class WishlistController {
 
     private final WishlistService wishlistService;
@@ -31,32 +32,30 @@ public class WishlistController {
     }
 
     @GetMapping
-    public List<WishlistItemResponse> list(@PathVariable Long userId) {
-        return wishlistService.list(userId);
+    public List<WishlistItemResponse> list() {
+        return wishlistService.list(SecurityUtils.getCurrentUserId());
     }
 
     @GetMapping("/{itemId}")
-    public WishlistItemResponse getItem(@PathVariable Long userId, @PathVariable Long itemId) {
-        return wishlistService.getItemResponse(userId, itemId);
+    public WishlistItemResponse getItem(@PathVariable Long itemId) {
+        return wishlistService.getItemResponse(SecurityUtils.getCurrentUserId(), itemId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public WishlistItemResponse add(@PathVariable Long userId,
-                                    @Valid @RequestBody WishlistItemRequest request) {
-        return wishlistService.add(userId, request);
+    public WishlistItemResponse add(@Valid @RequestBody WishlistItemRequest request) {
+        return wishlistService.add(SecurityUtils.getCurrentUserId(), request);
     }
 
     @PutMapping("/{itemId}")
-    public WishlistItemResponse update(@PathVariable Long userId,
-                                       @PathVariable Long itemId,
+    public WishlistItemResponse update(@PathVariable Long itemId,
                                        @Valid @RequestBody WishlistItemUpdateRequest request) {
-        return wishlistService.update(userId, itemId, request);
+        return wishlistService.update(SecurityUtils.getCurrentUserId(), itemId, request);
     }
 
     @DeleteMapping("/{itemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void remove(@PathVariable Long userId, @PathVariable Long itemId) {
-        wishlistService.remove(userId, itemId);
+    public void remove(@PathVariable Long itemId) {
+        wishlistService.remove(SecurityUtils.getCurrentUserId(), itemId);
     }
 }
