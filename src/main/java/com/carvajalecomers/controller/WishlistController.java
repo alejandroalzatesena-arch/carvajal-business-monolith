@@ -1,7 +1,9 @@
 package com.carvajalecomers.controller;
 
+import com.carvajalecomers.dto.WishlistHistoryResponse;
 import com.carvajalecomers.dto.WishlistItemRequest;
 import com.carvajalecomers.dto.WishlistItemResponse;
+import com.carvajalecomers.entity.WishlistHistory;
 import com.carvajalecomers.entity.WishlistItem;
 import com.carvajalecomers.service.WishlistService;
 import jakarta.validation.Valid;
@@ -67,5 +69,15 @@ public class WishlistController {
             @PathVariable Long productId) {
         wishlistService.removeProduct(userId, productId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<WishlistHistoryResponse>> getHistory(
+            @RequestHeader("X-User-Id") Long userId) {
+        List<WishlistHistory> history = wishlistService.getHistory(userId);
+        List<WishlistHistoryResponse> response = history.stream()
+                .map(WishlistHistoryResponse::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(response);
     }
 }
