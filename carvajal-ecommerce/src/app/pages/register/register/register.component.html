@@ -1,0 +1,158 @@
+<div class="register-page">
+
+    <div class="register-card">
+
+        <div class="register-image">
+
+            <img
+                src="assets/images/register.png">
+
+        </div>
+
+        <div class="register-form">
+
+            <h1>Crear Cuenta</h1>
+
+            <p>
+
+                Regístrate para comenzar a comprar.
+
+            </p>
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <mat-form-field appearance="outline">
+
+                        <mat-label>Nombre</mat-label>
+
+                        <input
+                            matInput
+                            [(ngModel)]="user.name">
+
+                    </mat-form-field>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <mat-form-field appearance="outline">
+
+                        <mat-label>Apellido</mat-label>
+
+                        <input
+                            matInput
+                            [(ngModel)]="user.lastname">
+
+                    </mat-form-field>
+
+                </div>
+
+            </div>
+
+            <mat-form-field appearance="outline">
+
+                <mat-label>Correo</mat-label>
+
+                <input
+                    matInput
+                    [(ngModel)]="user.email">
+
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+
+                <mat-label>Teléfono</mat-label>
+
+                <input
+                    matInput
+                    [(ngModel)]="user.phone">
+
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+
+                <mat-label>Dirección</mat-label>
+
+                <input
+                    matInput
+                    [(ngModel)]="user.address">
+
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+
+                <mat-label>Contraseña</mat-label>
+
+                <input
+                    matInput
+                    [type]="hidePassword ? 'password':'text'"
+                    [(ngModel)]="user.password">
+
+                <button
+                    mat-icon-button
+                    matSuffix
+                    (click)="hidePassword=!hidePassword">
+
+                    <mat-icon>
+
+                        {{hidePassword ? 'visibility':'visibility_off'}}
+
+                    </mat-icon>
+
+                </button>
+
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+
+                <mat-label>Confirmar contraseña</mat-label>
+
+                <input
+                    matInput
+                    [type]="hideConfirm ? 'password':'text'"
+                    [(ngModel)]="user.confirmPassword">
+
+                <button
+                    mat-icon-button
+                    matSuffix
+                    (click)="hideConfirm=!hideConfirm">
+
+                    <mat-icon>
+
+                        {{hideConfirm ? 'visibility':'visibility_off'}}
+
+                    </mat-icon>
+
+                </button>
+
+            </mat-form-field>
+
+            <button
+                mat-raised-button
+                color="primary"
+                class="register-button"
+                (click)="register()">
+
+                Registrarme
+
+            </button>
+
+            <div class="login-link">
+
+                ¿Ya tienes cuenta?
+
+                <a routerLink="/login">
+
+                    Inicia sesión
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

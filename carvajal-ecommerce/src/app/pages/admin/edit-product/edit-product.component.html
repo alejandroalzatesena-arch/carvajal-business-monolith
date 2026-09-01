@@ -1,0 +1,145 @@
+<div class="edit-product">
+
+    <div class="card">
+
+        <h1>
+
+            Editar Producto
+
+        </h1>
+
+        <div class="row">
+
+            <div class="col-lg-8">
+
+                <mat-form-field appearance="outline">
+
+                    <mat-label>Nombre</mat-label>
+
+                    <input
+                        matInput
+                        [(ngModel)]="product.name">
+
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+
+                    <mat-label>Marca</mat-label>
+
+                    <input
+                        matInput
+                        [(ngModel)]="product.brand">
+
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+
+                    <mat-label>Categoría</mat-label>
+
+                    <mat-select
+                        [(ngModel)]="product.category">
+
+                        <mat-option
+                            *ngFor="let item of categories"
+                            [value]="item">
+
+                            {{item}}
+
+                        </mat-option>
+
+                    </mat-select>
+
+                </mat-form-field>
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>Precio</mat-label>
+
+                            <input
+                                matInput
+                                type="number"
+                                [(ngModel)]="product.price">
+
+                        </mat-form-field>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <mat-form-field appearance="outline">
+
+                            <mat-label>Stock</mat-label>
+
+                            <input
+                                matInput
+                                type="number"
+                                [(ngModel)]="product.stock">
+
+                        </mat-form-field>
+
+                    </div>
+
+                </div>
+
+                <mat-form-field appearance="outline">
+
+                    <mat-label>Descripción</mat-label>
+
+                    <textarea
+                        rows="5"
+                        matInput
+                        [(ngModel)]="product.description">
+
+                    </textarea>
+
+                </mat-form-field>
+
+                <button
+                    mat-raised-button
+                    color="accent"
+                    (click)="updateProduct()">
+
+                    Actualizar Producto
+
+                </button>
+
+            </div>
+
+            <div class="col-lg-4">
+
+                <div class="preview">
+
+                    <img
+                        [src]="product.image">
+
+                    <h3>
+
+                        {{product.name}}
+
+                    </h3>
+
+                    <p>
+
+                        {{product.brand}}
+
+                    </p>
+
+                    <h4>
+
+                        $ {{product.price}}
+
+                    </h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

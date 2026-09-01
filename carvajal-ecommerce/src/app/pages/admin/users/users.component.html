@@ -1,0 +1,126 @@
+<div class="users">
+
+    <div class="header">
+
+        <h1>
+
+            Gestión de Usuarios
+
+        </h1>
+
+    </div>
+
+    <div class="search">
+
+        <mat-form-field appearance="outline">
+
+            <mat-label>
+
+                Buscar usuario
+
+            </mat-label>
+
+            <input
+                matInput
+                [(ngModel)]="search">
+
+        </mat-form-field>
+
+    </div>
+
+    <table class="table table-hover align-middle">
+
+        <thead>
+
+            <tr>
+
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Ciudad</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <tr *ngFor="let user of users">
+
+                <td>{{user.id}}</td>
+
+                <td>{{user.name}}</td>
+
+                <td>{{user.email}}</td>
+
+                <td>{{user.phone}}</td>
+
+                <td>{{user.city}}</td>
+
+                <td>
+
+                    <span
+                        class="badge"
+                        [ngClass]="user.role=='Administrador'
+                        ? 'bg-primary'
+                        : 'bg-secondary'">
+
+                        {{user.role}}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <span
+                        class="badge"
+                        [ngClass]="user.status=='Activo'
+                        ? 'bg-success'
+                        : 'bg-danger'">
+
+                        {{user.status}}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <button
+                        mat-icon-button
+                        color="primary">
+
+                        <mat-icon>
+
+                            edit
+
+                        </mat-icon>
+
+                    </button>
+
+                    <button
+                        mat-icon-button
+                        color="warn">
+
+                        <mat-icon>
+
+                            Eliminar
+
+                        </mat-icon>
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>

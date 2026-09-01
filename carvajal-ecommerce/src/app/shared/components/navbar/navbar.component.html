@@ -1,0 +1,137 @@
+<mat-toolbar color="primary" class="topbar">
+
+    <div class="logo" routerLink="/">
+
+        <mat-icon>
+
+            memory
+
+        </mat-icon>
+
+        <span>
+
+            Carvajal Tech
+
+        </span>
+
+    </div>
+
+    <span class="spacer"></span>
+
+    <div class="search">
+
+        <mat-form-field appearance="outline">
+
+            <mat-icon matPrefix>
+
+                search
+
+            </mat-icon>
+
+            <input
+                matInput
+                placeholder="Buscar componentes..."
+                [(ngModel)]="search">
+
+        </mat-form-field>
+
+    </div>
+
+    <button
+        mat-icon-button
+        routerLink="/wishlist">
+
+        <mat-icon
+            [matBadge]="wishlistItems"
+            matBadgeColor="warn">
+
+            favorite
+
+        </mat-icon>
+
+    </button>
+
+    <button
+        mat-icon-button>
+
+        <mat-icon
+            [matBadge]="cartItems"
+            matBadgeColor="accent">
+
+            shopping_cart
+
+        </mat-icon>
+
+    </button>
+
+    <button
+        mat-icon-button
+        [matMenuTriggerFor]="menuUser">
+
+        <mat-icon>
+
+            account_circle
+
+        </mat-icon>
+
+    </button>
+
+    <mat-menu #menuUser="matMenu">
+
+        <button
+            mat-menu-item
+            routerLink="/profile">
+
+            <mat-icon>
+
+                person
+
+            </mat-icon>
+
+            Mi Perfil
+
+        </button>
+
+        <button
+            mat-menu-item
+            routerLink="/admin">
+
+            <mat-icon>
+
+                admin_panel_settings
+
+            </mat-icon>
+
+            Panel Administrador
+
+        </button>
+
+        <button
+            mat-menu-item
+            routerLink="/login">
+
+            <mat-icon>
+
+                logout
+
+            </mat-icon>
+
+            Cerrar sesión
+
+        </button>
+
+    </mat-menu>
+
+</mat-toolbar>
+
+<nav class="menu">
+
+    <a
+        *ngFor="let item of menu"
+        [routerLink]="item.route">
+
+        {{item.name}}
+
+    </a>
+
+</nav>

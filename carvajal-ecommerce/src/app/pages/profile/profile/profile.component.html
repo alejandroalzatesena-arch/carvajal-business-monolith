@@ -1,0 +1,113 @@
+<div class="profile">
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-lg-4">
+
+                <div class="profile-card">
+
+                    <img [src]="user.image">
+
+                    <h2>
+
+                        {{user.name}} {{user.lastname}}
+
+                    </h2>
+
+                    <p>
+
+                        {{user.role}}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-8">
+
+                <div class="info-card">
+
+                    <h3>
+
+                        Mi Perfil
+
+                    </h3>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <mat-form-field appearance="outline">
+
+                                <mat-label>Nombre</mat-label>
+
+                                <input matInput [(ngModel)]="user.name">
+
+                            </mat-form-field>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <mat-form-field appearance="outline">
+
+                                <mat-label>Apellido</mat-label>
+
+                                <input matInput [(ngModel)]="user.lastname">
+
+                            </mat-form-field>
+
+                        </div>
+
+                    </div>
+
+                    <mat-form-field appearance="outline">
+
+                        <mat-label>Email</mat-label>
+
+                        <input matInput [(ngModel)]="user.email">
+
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+
+                        <mat-label>Teléfono</mat-label>
+
+                        <input matInput [(ngModel)]="user.phone">
+
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+
+                        <mat-label>Ciudad</mat-label>
+
+                        <input matInput [(ngModel)]="user.city">
+
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+
+                        <mat-label>Dirección</mat-label>
+
+                        <input matInput [(ngModel)]="user.address">
+
+                    </mat-form-field>
+
+                    <button mat-raised-button color="primary" (click)="save()">
+
+                        Guardar Cambios
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

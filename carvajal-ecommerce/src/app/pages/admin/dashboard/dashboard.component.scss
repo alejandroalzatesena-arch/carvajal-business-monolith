@@ -1,0 +1,93 @@
+.dashboard{
+
+    padding:40px;
+
+    background:#f5f7fa;
+
+    min-height:100vh;
+
+}
+
+.dashboard h1{
+
+    font-weight:bold;
+
+    color:#1565C0;
+
+    margin-bottom:40px;
+
+}
+
+.stat-card{
+
+    border-radius:20px;
+
+    color:white;
+
+    text-align:center;
+
+    padding:35px;
+
+    margin-bottom:25px;
+
+    transition:.35s;
+
+    box-shadow:0 12px 25px rgba(0,0,0,.15);
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.stat-card mat-icon{
+
+    font-size:55px;
+
+    width:55px;
+
+    height:55px;
+
+    margin-bottom:15px;
+
+}
+
+.stat-card h2{
+
+    font-size:38px;
+
+    font-weight:bold;
+
+}
+
+.stat-card p{
+
+    margin-top:10px;
+
+    font-size:18px;
+
+}
+
+.welcome{
+
+    margin-top:40px;
+
+    background:white;
+
+    padding:35px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.welcome h2{
+
+    color:#1565C0;
+
+    font-weight:bold;
+
+}
