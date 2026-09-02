@@ -21,6 +21,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "Usuario no encontrado con email: " + email));
-        return new CustomUserDetails(user.getId(), user.getEmail());
+        // El hash es imprescindible: DaoAuthenticationProvider lo compara con
+        // la contraseña enviada en el login.
+        return new CustomUserDetails(user.getId(), user.getEmail(), user.getPassword());
     }
 }

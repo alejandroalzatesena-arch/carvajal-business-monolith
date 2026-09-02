@@ -11,10 +11,20 @@ public class CustomUserDetails implements UserDetails {
 
     private final Long userId;
     private final String email;
+    private final String password;
 
-    public CustomUserDetails(Long userId, String email) {
+    public CustomUserDetails(Long userId, String email, String password) {
         this.userId = userId;
         this.email = email;
+        this.password = password;
+    }
+
+    /**
+     * Variante para el filtro JWT: el token ya viene validado, de modo que no
+     * se comprueban credenciales y no hace falta cargar el hash desde la BD.
+     */
+    public CustomUserDetails(Long userId, String email) {
+        this(userId, email, "");
     }
 
     public Long getUserId() {
@@ -28,7 +38,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     @Override
