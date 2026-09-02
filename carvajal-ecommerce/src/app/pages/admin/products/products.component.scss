@@ -1,0 +1,123 @@
+.products{
+
+    padding:40px;
+
+    background:#f5f7fa;
+
+    min-height:100vh;
+
+}
+
+.header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+
+}
+
+.header h1{
+
+    font-weight:bold;
+
+    color:#1565C0;
+
+}
+
+.search{
+
+    margin-bottom:30px;
+
+}
+
+.search mat-form-field{
+
+    width:350px;
+
+}
+
+table{
+
+    background:white;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+}
+
+thead{
+
+    background:#1565C0;
+
+    color:white;
+
+}
+
+th{
+
+    padding:18px !important;
+
+}
+
+td{
+
+    padding:15px !important;
+
+}
+
+img{
+
+    width:70px;
+
+    height:70px;
+
+    border-radius:10px;
+
+    object-fit:cover;
+
+}
+
+.badge{
+
+    font-size:14px;
+
+}
+
+button{
+
+    margin-right:8px;
+
+}
+
+@media(max-width:768px){
+
+.header{
+
+flex-direction:column;
+
+gap:20px;
+
+}
+
+.search mat-form-field{
+
+width:100%;
+
+}
+
+table{
+
+display:block;
+
+overflow:auto;
+
+}
+
+}

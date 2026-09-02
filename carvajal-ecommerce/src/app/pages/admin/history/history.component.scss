@@ -1,0 +1,97 @@
+.history{
+
+    padding:40px;
+
+    background:#f5f7fa;
+
+    min-height:100vh;
+
+}
+
+.history h1{
+
+    color:#1565C0;
+
+    font-weight:bold;
+
+    margin-bottom:35px;
+
+}
+
+.history-card{
+
+    display:flex;
+
+    align-items:center;
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    margin-bottom:20px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.history-card:hover{
+
+    transform:translateY(-4px);
+
+}
+
+.icon{
+
+    width:70px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.icon mat-icon{
+
+    font-size:40px;
+
+    width:40px;
+
+    height:40px;
+
+}
+
+.content{
+
+    flex:1;
+
+}
+
+.content h3{
+
+    margin:0;
+
+    color:#1565C0;
+
+    font-weight:bold;
+
+}
+
+.content p{
+
+    margin:8px 0;
+
+    color:#555;
+
+}
+
+.content small{
+
+    color:#999;
+
+}

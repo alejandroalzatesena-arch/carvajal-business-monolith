@@ -1,0 +1,77 @@
+<section class="catalog">
+
+    <div class="container">
+
+        <div class="catalog-header">
+
+            <h1>Catálogo</h1>
+
+            <input type="text" class="form-control" placeholder="Buscar productos..." [(ngModel)]="search">
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-lg-3 col-md-6" *ngFor="let product of products">
+
+                <mat-card>
+
+                    <img mat-card-image [src]="product.image">
+
+                    <mat-card-content>
+
+                        <small>
+
+                            {{product.category}}
+
+                        </small>
+
+                        <h4>
+
+                            {{product.name}}
+
+                        </h4>
+
+                        <h3>
+
+                            {{product.price}}
+
+                        </h3>
+
+                    </mat-card-content>
+
+                    <mat-card-actions>
+
+                        <button mat-raised-button color="primary">
+
+                            <mat-icon>
+
+                                shopping_cart
+
+                            </mat-icon>
+
+                            Comprar
+
+                        </button>
+
+                        <button mat-icon-button color="warn">
+
+                            <mat-icon>
+
+                                favorite
+
+                            </mat-icon>
+
+                        </button>
+
+                    </mat-card-actions>
+
+                </mat-card>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

@@ -1,0 +1,113 @@
+.topbar{
+
+    height:80px;
+
+    background:#0d47a1 !important;
+
+    display:flex;
+
+    align-items:center;
+
+    padding:0 30px;
+
+}
+
+.logo{
+
+    display:flex;
+
+    align-items:center;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    gap:10px;
+
+}
+
+.logo mat-icon{
+
+    font-size:34px;
+
+    width:34px;
+
+    height:34px;
+
+}
+
+.spacer{
+
+    flex:1;
+
+}
+
+.search{
+
+    width:400px;
+
+    margin-right:20px;
+
+}
+
+.search mat-form-field{
+
+    width:100%;
+
+}
+
+.menu{
+
+    background:#1565C0;
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:40px;
+
+    padding:15px;
+
+}
+
+.menu a{
+
+    color:white;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.menu a:hover{
+
+    color:#FFD54F;
+
+}
+
+@media(max-width:992px){
+
+.search{
+
+    display:none;
+
+}
+
+.menu{
+
+    overflow:auto;
+
+    justify-content:flex-start;
+
+    padding-left:20px;
+
+}
+
+}
