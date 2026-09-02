@@ -1,13 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
-
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-
-
-
 
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
@@ -18,8 +13,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { MaterialModule } from './shared/material/material.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-
-
+import { JwtInterceptor } from './core/guards/interceptors/jwt.interceptor';
 
 @NgModule({
   declarations: [
@@ -31,20 +25,15 @@ import { AppRoutingModule } from './app-routing.module';
     FooterComponent
   ],
   imports: [
-
-BrowserModule,
-
-BrowserAnimationsModule,
-
-HttpClientModule,
-
-AppRoutingModule,
-
-MaterialModule
-
-]
-  ,providers: [
-    provideAnimationsAsync()
+    BrowserModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    AppRoutingModule,
+    MaterialModule
+  ],
+  providers: [
+    provideAnimationsAsync(),
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
