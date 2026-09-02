@@ -1,0 +1,24 @@
+# =============================================================================
+#  Railway - configuracion del servicio BACKEND
+#
+#  Aplica al servicio cuyo Root Directory es la raiz del repositorio.
+#  El servicio FRONTEND se configura desde el dashboard con
+#  Root Directory = carvajal-ecommerce (usa su propio Dockerfile) porque
+#  railway.toml solo describe un servicio.
+#
+#  La base de datos NO se declara aqui: en Railway se anade como
+#  PostgreSQL gestionado (+ New > Database > Add PostgreSQL).
+# =============================================================================
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# El backend no expone Actuator; /api/products es publico (permitAll) y toca
+# la BD, asi que sirve como healthcheck real de "app + conexion a Postgres".
+healthcheckPath = "/api/products"
+healthcheckTimeout = 180
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+numReplicas = 1
