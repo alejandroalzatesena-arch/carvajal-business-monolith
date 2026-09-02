@@ -1,43 +1,58 @@
-<mat-toolbar color="primary" class="topbar">
-  <div class="logo" routerLink="/">
-    <mat-icon>memory</mat-icon>
-    <span>Carvajal Tech</span>
+<header class="topbar" [class.is-open]="mobileMenuOpen">
+  <div class="topbar-row container">
+    <div class="logo" routerLink="/" (click)="closeMobileMenu()">
+      <mat-icon>memory</mat-icon>
+      <span>Carvajal Tech</span>
+    </div>
+
+    <nav class="menu-links">
+      <a *ngFor="let item of menu" [routerLink]="item.route" routerLinkActive="is-active" [routerLinkActiveOptions]="{exact: item.route === '/'}" class="menu-link">{{ item.name }}</a>
+    </nav>
+
+    <div class="search-field">
+      <mat-icon>search</mat-icon>
+      <input type="text" placeholder="Buscar productos" [(ngModel)]="search">
+    </div>
+
+    <div class="actions">
+      <ng-container *ngIf="isAuthenticated(); else guestActions">
+        <button mat-icon-button routerLink="/wishlist" aria-label="Lista de deseos" (click)="closeMobileMenu()">
+          <mat-icon>favorite</mat-icon>
+        </button>
+
+        <button mat-icon-button [matMenuTriggerFor]="menuUser" aria-label="Cuenta">
+          <mat-icon>account_circle</mat-icon>
+        </button>
+
+        <mat-menu #menuUser="matMenu">
+          <button mat-menu-item routerLink="/profile">
+            <mat-icon>person</mat-icon>
+            Mi perfil
+          </button>
+          <button mat-menu-item routerLink="/wishlist">
+            <mat-icon>favorite</mat-icon>
+            Mi lista de deseos
+          </button>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            Cerrar sesión
+          </button>
+        </mat-menu>
+      </ng-container>
+
+      <ng-template #guestActions>
+        <button mat-raised-button color="primary" class="login-btn" routerLink="/login" (click)="closeMobileMenu()">Iniciar sesión</button>
+      </ng-template>
+
+      <button mat-icon-button class="menu-toggle" (click)="toggleMobileMenu()" aria-label="Abrir menú">
+        <mat-icon>{{ mobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+      </button>
+    </div>
   </div>
 
-  <span class="spacer"></span>
-
-  <div class="menu-links">
-    <a *ngFor="let item of menu" [routerLink]="item.route" class="menu-link">{{ item.name }}</a>
-  </div>
-
-  <span class="spacer"></span>
-
-  <ng-container *ngIf="isAuthenticated()">
-    <button mat-icon-button routerLink="/wishlist">
-      <mat-icon>favorite</mat-icon>
-    </button>
-
-    <button mat-icon-button [matMenuTriggerFor]="menuUser">
-      <mat-icon>account_circle</mat-icon>
-    </button>
-
-    <mat-menu #menuUser="matMenu">
-      <button mat-menu-item routerLink="/profile">
-        <mat-icon>person</mat-icon>
-        Mi Perfil
-      </button>
-      <button mat-menu-item routerLink="/wishlist">
-        <mat-icon>favorite</mat-icon>
-        Mi Lista de Deseos
-      </button>
-      <button mat-menu-item (click)="logout()">
-        <mat-icon>logout</mat-icon>
-        Cerrar sesión
-      </button>
-    </mat-menu>
-  </ng-container>
-
-  <ng-container *ngIf="!isAuthenticated()">
-    <button mat-raised-button color="accent" routerLink="/login">Iniciar Sesión</button>
-  </ng-container>
-</mat-toolbar>
+  <nav class="mobile-panel" *ngIf="mobileMenuOpen">
+    <a *ngFor="let item of menu" [routerLink]="item.route" (click)="closeMobileMenu()">{{ item.name }}</a>
+    <a routerLink="/wishlist" *ngIf="isAuthenticated()" (click)="closeMobileMenu()">Mi lista de deseos</a>
+    <a routerLink="/profile" *ngIf="isAuthenticated()" (click)="closeMobileMenu()">Mi perfil</a>
+  </nav>
+</header>

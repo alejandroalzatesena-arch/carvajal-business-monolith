@@ -1,11 +1,15 @@
 <div class="register-page">
   <div class="register-card">
     <div class="register-image">
-      <img src="assets/images/register.png">
+      <img src="assets/images/register.png" alt="Carvajal Tech">
     </div>
     <div class="register-form">
-      <h1>Crear Cuenta</h1>
-      <p>Regístrate para comenzar a comprar.</p>
+      <div class="brand-mark">
+        <mat-icon>memory</mat-icon>
+        Carvajal Tech
+      </div>
+      <h1>Crea tu cuenta</h1>
+      <p>Regístrate para comenzar a comprar y guardar tu lista de deseos.</p>
 
       <mat-form-field appearance="outline">
         <mat-label>Nombre completo</mat-label>
@@ -14,29 +18,31 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Correo</mat-label>
+        <mat-label>Correo electrónico</mat-label>
         <input matInput [(ngModel)]="email" type="email">
         <mat-icon matSuffix>email</mat-icon>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Contraseña</mat-label>
-        <input matInput [type]="hidePassword ? 'password':'text'" [(ngModel)]="password">
-        <button mat-icon-button matSuffix (click)="hidePassword=!hidePassword">
-          <mat-icon>{{hidePassword ? 'visibility':'visibility_off'}}</mat-icon>
-        </button>
-      </mat-form-field>
+      <div class="field-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Contraseña</mat-label>
+          <input matInput [type]="hidePassword ? 'password':'text'" [(ngModel)]="password">
+          <button mat-icon-button matSuffix (click)="hidePassword=!hidePassword" type="button" [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'">
+            <mat-icon>{{hidePassword ? 'visibility':'visibility_off'}}</mat-icon>
+          </button>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Confirmar contraseña</mat-label>
-        <input matInput [type]="hideConfirm ? 'password':'text'" [(ngModel)]="confirmPassword">
-        <button mat-icon-button matSuffix (click)="hideConfirm=!hideConfirm">
-          <mat-icon>{{hideConfirm ? 'visibility':'visibility_off'}}</mat-icon>
-        </button>
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Confirmar contraseña</mat-label>
+          <input matInput [type]="hideConfirm ? 'password':'text'" [(ngModel)]="confirmPassword">
+          <button mat-icon-button matSuffix (click)="hideConfirm=!hideConfirm" type="button" [attr.aria-label]="hideConfirm ? 'Mostrar contraseña' : 'Ocultar contraseña'">
+            <mat-icon>{{hideConfirm ? 'visibility':'visibility_off'}}</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
 
       <button mat-raised-button color="primary" class="register-button" (click)="register()" [disabled]="loading">
-        {{ loading ? 'Registrando...' : 'Registrarme' }}
+        {{ loading ? 'Registrando...' : 'Crear cuenta' }}
       </button>
 
       <div class="login-link">

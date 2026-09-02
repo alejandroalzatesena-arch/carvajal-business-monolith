@@ -2,7 +2,7 @@
 
     <h1>
 
-        Panel Administrativo
+        Panel administrativo
 
     </h1>
 
@@ -12,15 +12,20 @@
             class="col-lg-3 col-md-6"
             *ngFor="let item of stats">
 
-            <div
-                class="stat-card"
-                [style.background]="item.color">
+            <div class="stat-card">
 
-                <mat-icon>
+                <div
+                    class="stat-icon"
+                    [style.background]="item.color + '1a'"
+                    [style.color]="item.color">
 
-                    {{item.icon}}
+                    <mat-icon>
 
-                </mat-icon>
+                        {{item.icon}}
+
+                    </mat-icon>
+
+                </div>
 
                 <h2>
 
@@ -44,7 +49,7 @@
 
         <h2>
 
-            Bienvenido Administrador
+            Bienvenido, administrador
 
         </h2>
 

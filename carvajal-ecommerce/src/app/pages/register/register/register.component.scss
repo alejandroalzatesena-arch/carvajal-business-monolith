@@ -1,135 +1,89 @@
-.register-page{
-
-    min-height:100vh;
-
-    background:linear-gradient(135deg,#0D47A1,#42A5F5);
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    padding:40px;
-
+.register-page {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
-.register-card{
-
-    width:100%;
-
-    max-width:1200px;
-
-    display:grid;
-
-    grid-template-columns:1fr 1fr;
-
-    background:white;
-
-    border-radius:25px;
-
-    overflow:hidden;
-
-    box-shadow:0 20px 50px rgba(0,0,0,.2);
-
+.register-card {
+  width: 100%;
+  max-width: 1100px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
 }
 
-.register-image{
-
-    background:#1565C0;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
+.register-image {
+  background: var(--color-primary-light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-6);
 }
 
-.register-image img{
-
-    width:80%;
-
+.register-image img {
+  width: 100%;
+  border-radius: var(--radius-md);
 }
 
-.register-form{
-
-    padding:45px;
-
+.register-form {
+  padding: var(--space-7) var(--space-6);
 }
 
-.register-form h1{
-
-    color:#1565C0;
-
-    font-size:40px;
-
-    font-weight:bold;
-
+.brand-mark {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--space-5);
 }
 
-.register-form p{
-
-    margin-bottom:30px;
-
-    color:#666;
-
+.register-form h1 {
+  font-size: 2rem;
+  margin-bottom: var(--space-2);
 }
 
-mat-form-field{
-
-    width:100%;
-
-    margin-bottom:18px;
-
+.register-form p {
+  margin-bottom: var(--space-5);
 }
 
-.register-button{
-
-    width:100%;
-
-    height:50px;
-
-    border-radius:30px;
-
+mat-form-field {
+  width: 100%;
+  margin-bottom: var(--space-3);
 }
 
-.login-link{
-
-    margin-top:25px;
-
-    text-align:center;
-
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
 }
 
-.login-link a{
-
-    color:#1565C0;
-
-    text-decoration:none;
-
-    font-weight:bold;
-
+.register-button {
+  width: 100%;
+  height: 48px;
+  border-radius: var(--radius-pill) !important;
+  font-weight: 600;
+  margin-top: var(--space-2);
 }
 
-@media(max-width:900px){
-
-.register-card{
-
-grid-template-columns:1fr;
-
+.login-link {
+  margin-top: var(--space-5);
+  text-align: center;
+  color: var(--color-slate);
 }
 
-.register-image{
-
-display:none;
-
+.login-link a {
+  color: var(--color-primary);
+  font-weight: 600;
 }
 
-.register-form{
-
-padding:30px;
-
-}
-
+@media (max-width: 900px) {
+  .register-card { grid-template-columns: 1fr; }
+  .register-image { display: none; }
+  .register-form { padding: var(--space-5); }
+  .field-row { grid-template-columns: 1fr; }
 }
