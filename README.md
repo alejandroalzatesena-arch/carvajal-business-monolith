@@ -406,8 +406,9 @@ defecto:
 
 2. **`SecurityConfig.java` tiene que aceptar el dominio del frontend.** Hoy el
    origen está fijado a `http://localhost:4200`, por lo que en Railway **todas
-   las peticiones fallarían con error de CORS**. Cambio necesario (es
-   responsabilidad del Integrante 2; no se incluye en esta rama de DevOps):
+   las peticiones fallarían con error de CORS**. Este cambio **no está aplicado**
+   en el repositorio, porque la configuración activa es la opción A y con ella
+   no hace falta:
 
    ```java
    // antes
