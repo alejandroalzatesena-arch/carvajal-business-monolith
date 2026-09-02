@@ -1,77 +1,42 @@
 <section class="catalog">
-
-    <div class="container">
-
-        <div class="catalog-header">
-
-            <h1>Catálogo</h1>
-
-            <input type="text" class="form-control" placeholder="Buscar productos..." [(ngModel)]="search">
-
-        </div>
-
-        <div class="row">
-
-            <div class="col-lg-3 col-md-6" *ngFor="let product of products">
-
-                <mat-card>
-
-                    <img mat-card-image [src]="product.image">
-
-                    <mat-card-content>
-
-                        <small>
-
-                            {{product.category}}
-
-                        </small>
-
-                        <h4>
-
-                            {{product.name}}
-
-                        </h4>
-
-                        <h3>
-
-                            {{product.price}}
-
-                        </h3>
-
-                    </mat-card-content>
-
-                    <mat-card-actions>
-
-                        <button mat-raised-button color="primary">
-
-                            <mat-icon>
-
-                                shopping_cart
-
-                            </mat-icon>
-
-                            Comprar
-
-                        </button>
-
-                        <button mat-icon-button color="warn">
-
-                            <mat-icon>
-
-                                favorite
-
-                            </mat-icon>
-
-                        </button>
-
-                    </mat-card-actions>
-
-                </mat-card>
-
-            </div>
-
-        </div>
-
+  <div class="container">
+    <div class="catalog-header">
+      <h1>Catálogo</h1>
+      <mat-form-field appearance="outline">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput placeholder="Buscar productos..." [(ngModel)]="search">
+      </mat-form-field>
     </div>
 
+    <div *ngIf="loading" class="loading">
+      <p>Cargando productos...</p>
+    </div>
+
+    <div *ngIf="!loading && filteredProducts.length === 0" class="empty">
+      <p>No se encontraron productos.</p>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-3 col-md-6" *ngFor="let product of filteredProducts">
+        <mat-card>
+          <img mat-card-image [src]="product.imageUrl || 'assets/images/no-image.png'" [alt]="product.name">
+          <mat-card-content>
+            <small class="category">{{ product.category }}</small>
+            <h4>{{ product.name }}</h4>
+            <p class="description">{{ product.description }}</p>
+            <h3 class="price">${{ product.price | number:'1.0-0' }}</h3>
+            <span class="stock-badge" [class]="'stock-' + getStockColor(product.stock)">
+              {{ getStockLabel(product.stock) }}
+            </span>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="addToWishlist(product)" [disabled]="product.stock === 0">
+              <mat-icon>favorite</mat-icon>
+              Agregar a lista
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
 </section>

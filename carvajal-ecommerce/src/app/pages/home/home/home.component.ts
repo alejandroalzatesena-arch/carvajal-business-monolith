@@ -1,83 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ProductService } from '../../../core/services/product.service';
+import { Product } from '../../../core/guards/models/product';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent {
-
+export class HomeComponent implements OnInit {
   categories = [
-
-    {
-      icon: 'computer',
-      title: 'PC Gamer'
-    },
-
-    {
-      icon: 'keyboard',
-      title: 'Teclados'
-    },
-
-    {
-      icon: 'mouse',
-      title: 'Mouse'
-    },
-
-    {
-      icon: 'headphones',
-      title: 'Auriculares'
-    },
-
-    {
-      icon: 'memory',
-      title: 'Procesadores'
-    },
-
-    {
-      icon: 'developer_board',
-      title: 'Tarjetas Madre'
-    },
-
-    {
-      icon: 'storage',
-      title: 'SSD'
-    },
-
-    {
-      icon: 'videogame_asset',
-      title: 'Accesorios'
-
-    }
-
+    { icon: 'computer', title: 'PC Gamer' },
+    { icon: 'keyboard', title: 'Teclados' },
+    { icon: 'mouse', title: 'Mouse' },
+    { icon: 'headphones', title: 'Auriculares' },
+    { icon: 'memory', title: 'Procesadores' },
+    { icon: 'developer_board', title: 'Tarjetas Madre' },
+    { icon: 'storage', title: 'SSD' },
+    { icon: 'videogame_asset', title: 'Accesorios' }
   ];
 
-  featuredProducts = [
+  featuredProducts: Product[] = [];
 
-    {
-      name: 'Teclado Mecánico Redragon Kumara',
-      price: '$259.900',
-      image: 'assets/images/keyboard.jpg'
-    },
+  constructor(private productService: ProductService) {}
 
-    {
-      name: 'Mouse Logitech G502 Hero',
-      price: '$219.900',
-      image: 'assets/images/mouse.jpg'
-    },
-
-    {
-      name: 'Monitor Gamer LG UltraGear 27"',
-      price: '$1.399.900',
-      image: 'assets/images/monitor.jpg'
-    },
-
-    {
-      name: 'Audífonos HyperX Cloud II',
-      price: '$449.900',
-      image: 'assets/images/headset.jpg'
-    }
-
-  ];
-
+  ngOnInit(): void {
+    this.productService.getCatalog().subscribe({
+      next: (products) => {
+        this.featuredProducts = products.slice(0, 4);
+      }
+    });
+  }
 }

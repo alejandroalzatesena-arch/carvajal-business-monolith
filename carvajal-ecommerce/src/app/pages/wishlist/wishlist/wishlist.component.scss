@@ -1,87 +1,106 @@
-.wishlist{
-
-    padding:70px 0;
-
-    min-height:100vh;
-
-    background:#f4f6fb;
-
+.wishlist {
+  padding: 70px 0;
+  min-height: 100vh;
+  background: #f4f6fb;
 }
 
-.wishlist h1{
-
-    text-align:center;
-
-    margin-bottom:45px;
-
-    font-weight:bold;
-
-    color:#1565C0;
-
+.wishlist h1 {
+  text-align: center;
+  margin-bottom: 45px;
+  font-weight: bold;
+  color: #1565C0;
 }
 
-.empty{
-
-    text-align:center;
-
-    font-size:22px;
-
-    color:#888;
-
-    margin-top:80px;
-
+.empty {
+  text-align: center;
+  font-size: 22px;
+  color: #888;
+  margin-top: 80px;
 }
 
-mat-card{
-
-    border:none;
-
-    border-radius:18px;
-
-    overflow:hidden;
-
-    margin-bottom:30px;
-
-    transition:.3s;
-
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
-
+.empty a {
+  color: #1565C0;
+  text-decoration: underline;
 }
 
-mat-card:hover{
-
-    transform:translateY(-8px);
-
+.loading {
+  text-align: center;
+  padding: 60px 0;
+  font-size: 18px;
+  color: #888;
 }
 
-mat-card img{
-
-    height:250px;
-
-    object-fit:cover;
-
+mat-card {
+  border: none;
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 30px;
+  transition: .3s;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
 }
 
-mat-card-content{
-
-    padding:20px;
-
+mat-card.out-of-stock {
+  border-left: 4px solid #c62828;
+  opacity: 0.85;
 }
 
-mat-card-content h3{
-
-    color:#1565C0;
-
-    font-weight:bold;
-
+mat-card.insufficient-stock {
+  border-left: 4px solid #e65100;
 }
 
-mat-card-actions{
+mat-card:hover {
+  transform: translateY(-8px);
+}
 
-    display:flex;
+mat-card-content {
+  padding: 20px;
+}
 
-    justify-content:space-between;
+mat-card-content h3 {
+  color: #1565C0;
+  font-weight: bold;
+}
 
-    padding:20px;
+.stock-notification {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #fff3e0;
+  font-size: 13px;
+  font-weight: 500;
+}
 
+.stock-notification mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.qty {
+  font-weight: bold;
+  font-size: 16px;
+  min-width: 30px;
+  text-align: center;
+}
+
+.stock-info {
+  margin-left: 8px;
+  color: #888;
+  font-size: 12px;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
 }

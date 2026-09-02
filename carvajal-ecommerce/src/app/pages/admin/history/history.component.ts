@@ -1,59 +1,54 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { WishlistService } from '../../../core/services/wishlist.service';
+import { WishlistHistory } from '../../../core/guards/models/wishlist';
 
 @Component({
   selector: 'app-history',
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.scss']
 })
-export class HistoryComponent {
+export class HistoryComponent implements OnInit {
+  history: WishlistHistory[] = [];
+  loading = true;
 
-  history = [
+  constructor(private wishlistService: WishlistService) {}
 
-    {
-      action:'Producto agregado',
-      description:'Se agregó el teclado mecánico Redragon Kumara.',
-      user:'Administrador',
-      date:'08/08/2026 10:20 AM',
-      icon:'add_circle',
-      color:'primary'
-    },
+  ngOnInit(): void {
+    this.wishlistService.getHistory().subscribe({
+      next: (data) => {
+        this.history = data;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
+  }
 
-    {
-      action:'Producto actualizado',
-      description:'Se actualizó el precio del Mouse Logitech G502.',
-      user:'Administrador',
-      date:'08/08/2026 11:45 AM',
-      icon:'edit',
-      color:'accent'
-    },
-
-    {
-      action:'Producto eliminado',
-      description:'Se eliminó un monitor LG UltraGear.',
-      user:'Administrador',
-      date:'08/08/2026 01:30 PM',
-      icon:'delete',
-      color:'warn'
-    },
-
-    {
-      action:'Nuevo usuario',
-      description:'Carlos Ramírez creó una cuenta.',
-      user:'Sistema',
-      date:'08/10/2026 03:10 PM',
-      icon:'person_add',
-      color:'primary'
-    },
-
-    {
-      action:'Inicio de sesión',
-      description:'El administrador inició sesión.',
-      user:'Administrador',
-      date:'08/10/2026 05:20 PM',
-      icon:'login',
-      color:'primary'
+  getActionIcon(action: string): string {
+    switch (action) {
+      case 'ADD': return 'add_circle';
+      case 'UPDATE': return 'edit';
+      case 'REMOVE': return 'delete';
+      default: return 'info';
     }
+  }
 
-  ];
+  getActionColor(action: string): string {
+    switch (action) {
+      case 'ADD': return 'primary';
+      case 'UPDATE': return 'accent';
+      case 'REMOVE': return 'warn';
+      default: return '';
+    }
+  }
 
+  getActionLabel(action: string): string {
+    switch (action) {
+      case 'ADD': return 'Producto agregado';
+      case 'UPDATE': return 'Producto actualizado';
+      case 'REMOVE': return 'Producto eliminado';
+      default: return action;
+    }
+  }
 }

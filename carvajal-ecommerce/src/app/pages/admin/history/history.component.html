@@ -1,47 +1,24 @@
 <div class="history">
+  <h1>Historial de Actividad</h1>
 
-    <h1>
+  <div *ngIf="loading" class="loading">
+    <p>Cargando historial...</p>
+  </div>
 
-        Historial de Actividad
+  <p *ngIf="!loading && history.length === 0" class="empty">
+    No hay actividad registrada.
+  </p>
 
-    </h1>
-
-    <div
-        class="history-card"
-        *ngFor="let item of history">
-
-        <div class="icon">
-
-            <mat-icon [color]="item.color">
-
-                {{item.icon}}
-
-            </mat-icon>
-
-        </div>
-
-        <div class="content">
-
-            <h3>
-
-                {{item.action}}
-
-            </h3>
-
-            <p>
-
-                {{item.description}}
-
-            </p>
-
-            <small>
-
-                {{item.user}} • {{item.date}}
-
-            </small>
-
-        </div>
-
+  <div class="history-card" *ngFor="let item of history">
+    <div class="icon">
+      <mat-icon [color]="getActionColor(item.action)">
+        {{ getActionIcon(item.action) }}
+      </mat-icon>
     </div>
-
+    <div class="content">
+      <h3>{{ getActionLabel(item.action) }}</h3>
+      <p>{{ item.productNameSnapshot }} - ${{ item.productPriceSnapshot | number:'1.0-0' }}</p>
+      <small>{{ item.actionAt | date:'dd/MM/yyyy HH:mm' }}</small>
+    </div>
+  </div>
 </div>

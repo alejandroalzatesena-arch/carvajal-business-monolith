@@ -1,78 +1,50 @@
 <section class="wishlist">
+  <div class="container">
+    <h1>Mi Lista de Deseos</h1>
 
-    <div class="container">
-
-        <h1>
-
-            ❤️ Mi Lista de Deseos
-
-        </h1>
-
-        <p *ngIf="wishlist.length==0" class="empty">
-
-            No tienes productos agregados.
-
-        </p>
-
-        <div class="row">
-
-            <div
-                class="col-lg-4 col-md-6"
-                *ngFor="let product of wishlist; let i=index">
-
-                <mat-card>
-
-                    <img
-                        mat-card-image
-                        [src]="product.image">
-
-                    <mat-card-content>
-
-                        <h4>
-
-                            {{product.name}}
-
-                        </h4>
-
-                        <h3>
-
-                            {{product.price}}
-
-                        </h3>
-
-                    </mat-card-content>
-
-                    <mat-card-actions>
-
-                        <button
-                            mat-raised-button
-                            color="primary">
-
-                            Agregar al carrito
-
-                        </button>
-
-                        <button
-                            mat-icon-button
-                            color="warn"
-                            (click)="remove(i)">
-
-                            <mat-icon>
-
-                                Eliminar
-
-                            </mat-icon>
-
-                        </button>
-
-                    </mat-card-actions>
-
-                </mat-card>
-
-            </div>
-
-        </div>
-
+    <div *ngIf="loading" class="loading">
+      <p>Cargando lista...</p>
     </div>
 
+    <p *ngIf="!loading && items.length === 0" class="empty">
+      No tienes productos agregados. Visita el <a routerLink="/catalog">catálogo</a> para agregar productos.
+    </p>
+
+    <div class="row">
+      <div class="col-lg-4 col-md-6" *ngFor="let item of items">
+        <mat-card [class.out-of-stock]="isOutOfStock(item)" [class.insufficient-stock]="isInsufficientStock(item)">
+          <mat-card-content>
+            <h4>{{ item.productName }}</h4>
+            <h3>${{ item.productPrice | number:'1.0-0' }}</h3>
+
+            <div class="stock-notification" *ngIf="isOutOfStock(item)">
+              <mat-icon color="warn">warning</mat-icon>
+              <span>Sin stock disponible</span>
+            </div>
+            <div class="stock-notification" *ngIf="isInsufficientStock(item)">
+              <mat-icon color="accent">info</mat-icon>
+              <span>{{ item.stockStatus }}</span>
+            </div>
+
+            <div class="quantity-controls">
+              <button mat-icon-button (click)="updateQuantity(item, item.desiredQuantity - 1)" [disabled]="item.desiredQuantity <= 1">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <span class="qty">{{ item.desiredQuantity }}</span>
+              <button mat-icon-button (click)="updateQuantity(item, item.desiredQuantity + 1)" [disabled]="item.desiredQuantity >= item.availableStock">
+                <mat-icon>add</mat-icon>
+              </button>
+              <small class="stock-info">Stock: {{ item.availableStock }}</small>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="warn" (click)="removeItem(item)">
+              <mat-icon>delete</mat-icon>
+              Eliminar
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
 </section>

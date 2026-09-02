@@ -1,137 +1,43 @@
 <mat-toolbar color="primary" class="topbar">
+  <div class="logo" routerLink="/">
+    <mat-icon>memory</mat-icon>
+    <span>Carvajal Tech</span>
+  </div>
 
-    <div class="logo" routerLink="/">
+  <span class="spacer"></span>
 
-        <mat-icon>
+  <div class="menu-links">
+    <a *ngFor="let item of menu" [routerLink]="item.route" class="menu-link">{{ item.name }}</a>
+  </div>
 
-            memory
+  <span class="spacer"></span>
 
-        </mat-icon>
-
-        <span>
-
-            Carvajal Tech
-
-        </span>
-
-    </div>
-
-    <span class="spacer"></span>
-
-    <div class="search">
-
-        <mat-form-field appearance="outline">
-
-            <mat-icon matPrefix>
-
-                search
-
-            </mat-icon>
-
-            <input
-                matInput
-                placeholder="Buscar componentes..."
-                [(ngModel)]="search">
-
-        </mat-form-field>
-
-    </div>
-
-    <button
-        mat-icon-button
-        routerLink="/wishlist">
-
-        <mat-icon
-            [matBadge]="wishlistItems"
-            matBadgeColor="warn">
-
-            favorite
-
-        </mat-icon>
-
+  <ng-container *ngIf="isAuthenticated()">
+    <button mat-icon-button routerLink="/wishlist">
+      <mat-icon>favorite</mat-icon>
     </button>
 
-    <button
-        mat-icon-button>
-
-        <mat-icon
-            [matBadge]="cartItems"
-            matBadgeColor="accent">
-
-            shopping_cart
-
-        </mat-icon>
-
-    </button>
-
-    <button
-        mat-icon-button
-        [matMenuTriggerFor]="menuUser">
-
-        <mat-icon>
-
-            account_circle
-
-        </mat-icon>
-
+    <button mat-icon-button [matMenuTriggerFor]="menuUser">
+      <mat-icon>account_circle</mat-icon>
     </button>
 
     <mat-menu #menuUser="matMenu">
-
-        <button
-            mat-menu-item
-            routerLink="/profile">
-
-            <mat-icon>
-
-                person
-
-            </mat-icon>
-
-            Mi Perfil
-
-        </button>
-
-        <button
-            mat-menu-item
-            routerLink="/admin">
-
-            <mat-icon>
-
-                admin_panel_settings
-
-            </mat-icon>
-
-            Panel Administrador
-
-        </button>
-
-        <button
-            mat-menu-item
-            routerLink="/login">
-
-            <mat-icon>
-
-                logout
-
-            </mat-icon>
-
-            Cerrar sesión
-
-        </button>
-
+      <button mat-menu-item routerLink="/profile">
+        <mat-icon>person</mat-icon>
+        Mi Perfil
+      </button>
+      <button mat-menu-item routerLink="/wishlist">
+        <mat-icon>favorite</mat-icon>
+        Mi Lista de Deseos
+      </button>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Cerrar sesión
+      </button>
     </mat-menu>
+  </ng-container>
 
+  <ng-container *ngIf="!isAuthenticated()">
+    <button mat-raised-button color="accent" routerLink="/login">Iniciar Sesión</button>
+  </ng-container>
 </mat-toolbar>
-
-<nav class="menu">
-
-    <a
-        *ngFor="let item of menu"
-        [routerLink]="item.route">
-
-        {{item.name}}
-
-    </a>
-
-</nav>

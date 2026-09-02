@@ -1,117 +1,37 @@
 <section class="hero">
-
-    <div class="container">
-
-        <div class="hero-content">
-
-            <h1>
-
-                Bienvenido a Carvajal Shop
-
-            </h1>
-
-            <p>
-
-                Miles de productos con los mejores precios del mercado.
-
-            </p>
-
-            <button class="btn btn-warning btn-lg">
-
-                Comprar ahora
-
-            </button>
-
-        </div>
-
+  <div class="container">
+    <div class="hero-content">
+      <h1>Bienvenido a Carvajal Shop</h1>
+      <p>Miles de productos con los mejores precios del mercado.</p>
+      <button class="btn btn-warning btn-lg" routerLink="/catalog">Comprar ahora</button>
     </div>
-
+  </div>
 </section>
-
-
 
 <section class="container categories">
-
-    <h2>
-
-        Explora nuestras categorías
-
-    </h2>
-
-    <div class="row">
-
-        <div class="col-lg-2 col-md-4 col-6" *ngFor="let category of categories">
-
-            <div class="category-card">
-
-                <mat-icon>
-
-                    {{category.icon}}
-
-                </mat-icon>
-
-                <h5>
-
-                    {{category.title}}
-
-                </h5>
-
-            </div>
-
-        </div>
-
+  <h2>Explora nuestras categorías</h2>
+  <div class="row">
+    <div class="col-lg-2 col-md-4 col-6" *ngFor="let category of categories">
+      <div class="category-card" routerLink="/catalog">
+        <mat-icon>{{category.icon}}</mat-icon>
+        <h5>{{category.title}}</h5>
+      </div>
     </div>
-
+  </div>
 </section>
 
-
-
 <section class="container featured">
-
-    <h2>
-
-        Productos Destacados
-
-    </h2>
-
-    <div class="row">
-
-        <div class="col-lg-3 col-md-6" *ngFor="let product of featuredProducts">
-
-            <mat-card>
-
-                <img mat-card-image [src]="product.image">
-
-                <mat-card-content>
-
-                    <h5>
-
-                        {{product.name}}
-
-                    </h5>
-
-                    <h3>
-
-                        {{product.price}}
-
-                    </h3>
-
-                </mat-card-content>
-
-                <mat-card-actions>
-
-                    <button mat-raised-button color="primary">
-
-                        Añadir al carrito
-
-                    </button>
-
-                </mat-card-actions>
-
-            </mat-card>
-
-        </div>
-
+  <h2>Productos Destacados</h2>
+  <div class="row">
+    <div class="col-lg-3 col-md-6" *ngFor="let product of featuredProducts">
+      <mat-card routerLink="/catalog">
+        <img mat-card-image [src]="product.imageUrl || 'assets/images/no-image.png'" [alt]="product.name">
+        <mat-card-content>
+          <small>{{ product.category }}</small>
+          <h5>{{product.name}}</h5>
+          <h3>${{ product.price | number:'1.0-0' }}</h3>
+        </mat-card-content>
+      </mat-card>
     </div>
-
+  </div>
 </section>

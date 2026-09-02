@@ -1,38 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../core/services/auth.service';
+import { AuthResponse } from '../../../core/guards/models/user';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
+  user: AuthResponse | null = null;
 
-  user = {
+  constructor(private authService: AuthService) {}
 
-    name:'Juan',
-
-    lastname:'Ospina',
-
-    email:'juan@gmail.com',
-
-    phone:'3001234567',
-
-    city:'Armenia',
-
-    address:'Calle 06 #20-30',
-
-    role:'Cliente',
-
-    image:'assets/images/user.png'
-
-  };
-
-  save(){
-
-    console.log('Perfil actualizado');
-
-    console.log(this.user);
-
+  ngOnInit(): void {
+    this.user = this.authService.getCurrentUser();
   }
 
+  save(): void {
+    console.log('Perfil actualizado');
+  }
 }
