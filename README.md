@@ -176,22 +176,10 @@ ng serve
 
 *(cargado por `db/data.sql`)*
 
-> **Estado conocido: `POST /api/auth/login` devuelve `403` para cualquier usuario.**
-> No depende del entorno (falla igual en local nativo, en Docker y en Railway) y
-> es ajeno a la configuración de despliegue. Son dos defectos independientes del
-> backend/BD, pendientes de los Integrantes 1 y 2:
->
-> 1. `CustomUserDetails.getPassword()` devuelve `null`, así que
->    `DaoAuthenticationProvider` siempre rechaza la autenticación con el aviso
->    `BCryptPasswordEncoder : Empty encoded password`. Debe devolver el hash
->    almacenado del usuario.
-> 2. `db/data.sql` guarda la contraseña del usuario demo en **texto plano**
->    (`carvajal123`), mientras que el backend usa `BCryptPasswordEncoder`. El
->    seed debe insertar el hash BCrypt (60 caracteres, prefijo `$2a$`).
->
-> `POST /api/auth/register` sí funciona (devuelve `201` con un JWT válido)
-> porque no pasa por el `AuthenticationManager`. Hasta que se corrija lo
-> anterior, la forma de obtener un token es registrar un usuario nuevo.
+> La columna `users.password` almacena el **hash BCrypt**, nunca la contraseña en
+> claro: el backend autentica con `BCryptPasswordEncoder` y rechaza cualquier
+> otro formato. Si añades usuarios a mano al seed, inserta el hash (60
+> caracteres, prefijo `$2a$`), no el texto plano.
 
 ---
 
@@ -476,7 +464,7 @@ Convención de mensajes: [Conventional Commits](https://www.conventionalcommits.
 | `Schema-validation: missing table [users]` | La BD está vacía y `ddl-auto=validate` no crea tablas | Cargar `db/schema.sql`. En local: `docker compose down -v && docker compose up -d` |
 | Backend en bucle de reinicio en Railway | `SPRING_DATASOURCE_URL` mal formada (se usó `DATABASE_URL`) | Construirla desde las variables `PG*` como se indica en el paso 4 |
 | `Blocked by CORS policy` en el navegador | El dominio del frontend no está en `allowedOrigins` | Aplicar la opción A (proxy Nginx) o la opción B |
-| `403` en `/api/auth/login` con cualquier usuario | `CustomUserDetails.getPassword()` devuelve `null` y el seed guarda la clave en texto plano | Defecto de backend/BD, no de despliegue: ver la nota en *Credenciales de prueba*. Mientras tanto, usar `POST /api/auth/register` |
+| `403` en `/api/auth/login` y `Empty encoded password` en los logs | La contraseña del usuario está en texto plano en la BD, no como hash BCrypt | Reinsertar el usuario con el hash. Si es el seed: `docker compose down -v && docker compose up -d` para recargar `db/data.sql` |
 | `401` en `/api/wishlist` | Falta o expiró el JWT | Volver a iniciar sesión; revisar `JWT_EXPIRATION_MS` |
 | Healthcheck de Railway agotado | El arranque tarda más que `healthcheckTimeout` | Subir `healthcheckTimeout` en `railway.toml` |
 | `404` al recargar una ruta de Angular | Falta el fallback de SPA | Ya resuelto por `try_files $uri $uri/ /index.html` en `nginx/default.conf.template` |
