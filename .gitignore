@@ -34,3 +34,12 @@ build/
 
 .claude/
 CLAUDE.md
+
+
+# --- Reglas para el Frontend (Angular y Node.js) ---
+node_modules/
+dist/
+.angular/
+
+# Variables de entorno
+.env

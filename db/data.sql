@@ -1,5 +1,9 @@
+-- La columna password guarda el hash BCrypt, no la contrasena en claro: el
+-- backend autentica con BCryptPasswordEncoder y rechaza cualquier otro formato.
+-- Hash de 'carvajal123' (BCrypt, coste 10).
 INSERT INTO users (id, full_name, email, password) VALUES
-    (1, 'Cliente Demo Carvajal', 'cliente.demo@carvajal.com', 'carvajal123');
+    (1, 'Cliente Demo Carvajal', 'cliente.demo@carvajal.com',
+     '$2a$10$2911UFLpYjT6ne7eW5soT.HVGTlLX6Sqd1s0WK3zoHppp56Ks7C/O');
 
 INSERT INTO products (id, name, description, price, stock, image_url, category, active) VALUES
     (1,  'Portatil HP Pavilion 15',        'Core i5-1335U, 16GB RAM, 512GB SSD, 15.6" FHD, Windows 11.',       3199000.00, 25, 'https://picsum.photos/seed/hp-pavilion/300/300',  'Portatiles',   TRUE),

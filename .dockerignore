@@ -1,0 +1,41 @@
+# Contexto de build del BACKEND (Spring Boot).
+# Solo se necesitan pom.xml y src/: todo lo demas se excluye para que el
+# contexto viaje ligero y no invalide la cache de capas.
+
+.git
+.gitignore
+.gitattributes
+.github
+
+# Artefactos de compilacion locales
+target/
+HELP.md
+*.log
+
+# IDEs
+.idea/
+.vscode/
+.settings/
+.classpath
+.project
+*.iml
+*.iws
+*.ipr
+.claude/
+CLAUDE.md
+
+# El frontend tiene su propio contexto de build (carvajal-ecommerce/Dockerfile)
+carvajal-ecommerce/
+
+# Scripts SQL: se cargan en Postgres via docker-compose o psql,
+# no forman parte de la imagen del backend (ddl-auto=validate).
+db/
+
+# Ficheros de infraestructura y documentacion
+Dockerfile
+.dockerignore
+docker-compose.yml
+railway.toml
+README.md
+.env
+.env.*

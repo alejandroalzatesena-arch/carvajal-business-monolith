@@ -1,0 +1,88 @@
+# =============================================================================
+#  Entorno de DESARROLLO LOCAL unicamente.
+#
+#  ATENCION: este compose NO es un modelo de produccion. Incluye un contenedor
+#  de PostgreSQL con credenciales fijas y sin backups. En Railway se usa el
+#  PostgreSQL GESTIONADO del propio Railway (ver README > Despliegue en Railway).
+#
+#  Levantar:  docker compose up -d --build
+#  Apagar:    docker compose down          (conserva los datos)
+#             docker compose down -v       (borra la BD y relanza los scripts)
+# =============================================================================
+
+services:
+  # --------------------------------------------------------------------------
+  # PostgreSQL local. Credenciales alineadas con application.properties.
+  # --------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: carvajal-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: carvajal_wishlist
+      POSTGRES_USER: carvajal
+      POSTGRES_PASSWORD: carvajal123
+    ports:
+      # Expuesto para poder conectarse con psql/DBeaver desde el host.
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      # El backend arranca con ddl-auto=validate: el esquema TIENE que existir
+      # antes. Estos scripts solo se ejecutan la primera vez, cuando el volumen
+      # esta vacio (comportamiento de docker-entrypoint-initdb.d).
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./db/data.sql:/docker-entrypoint-initdb.d/02-data.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U carvajal -d carvajal_wishlist"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  # --------------------------------------------------------------------------
+  # Backend Spring Boot. Las propiedades se sobreescriben por variables de
+  # entorno (relaxed binding de Spring Boot), sin tocar application.properties.
+  # --------------------------------------------------------------------------
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: carvajal-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # "postgres" es el nombre del servicio: DNS interno de la red de compose.
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/carvajal_wishlist
+      SPRING_DATASOURCE_USERNAME: carvajal
+      SPRING_DATASOURCE_PASSWORD: carvajal123
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      # Solo para desarrollo. En Railway se genera un secreto nuevo.
+      JWT_SECRET: Q2FydmFqYWxFY29tZXJzU2VjcmV0S2V5MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY=
+      JWT_EXPIRATION_MS: "86400000"
+      PORT: "8080"
+    ports:
+      - "8080:8080"
+
+  # --------------------------------------------------------------------------
+  # Frontend Angular compilado y servido por Nginx.
+  # --------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./carvajal-ecommerce
+      dockerfile: Dockerfile
+    container_name: carvajal-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      PORT: "80"
+      # Destino del proxy /api dentro de la red de compose (sin barra final).
+      BACKEND_URL: "http://backend:8080"
+    ports:
+      # Se publica en 4200 para coincidir con el origen que el backend ya
+      # permite en SecurityConfig (allowedOrigins = http://localhost:4200).
+      - "4200:80"
+
+volumes:
+  postgres-data:

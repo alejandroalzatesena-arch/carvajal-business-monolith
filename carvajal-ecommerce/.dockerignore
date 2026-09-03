@@ -1,0 +1,22 @@
+# Contexto de build del FRONTEND (Angular 17).
+# node_modules se reinstala dentro de la imagen con `npm ci`.
+
+.git
+node_modules/
+dist/
+.angular/
+tmp/
+out-tsc/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# Infraestructura y docs (no entran en el build de Angular)
+Dockerfile
+.dockerignore
+README.md
+.env
+.env.*
+*.log

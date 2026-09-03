@@ -48,7 +48,10 @@ public class WishlistService {
                 });
     }
 
-    @Transactional(readOnly = true)
+    // Sin readOnly: getOrCreateByUser puede insertar la wishlist en el primer
+    // acceso del usuario. Al ser una autoinvocacion no pasa por el proxy de
+    // Spring, asi que heredaria esta transaccion y PostgreSQL rechazaria el
+    // INSERT con "cannot execute INSERT in a read-only transaction".
     public List<WishlistItem> listItems(Long userId) {
         Wishlist wishlist = getOrCreateByUser(userId);
         return wishlistItemRepository.findByWishlistId(wishlist.getId());
@@ -93,7 +96,7 @@ public class WishlistService {
         recordHistory(wishlist, item.getProduct(), WishlistAction.REMOVED);
     }
 
-    @Transactional(readOnly = true)
+    // Sin readOnly por el mismo motivo que listItems.
     public List<WishlistHistory> getHistory(Long userId) {
         Wishlist wishlist = getOrCreateByUser(userId);
         return wishlistHistoryRepository.findByWishlistIdOrderByActionAtDesc(wishlist.getId());
