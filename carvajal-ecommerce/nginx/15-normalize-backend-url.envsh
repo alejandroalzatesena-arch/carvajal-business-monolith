@@ -1,0 +1,27 @@
+#!/bin/sh
+# =============================================================================
+#  Normaliza BACKEND_URL antes de que envsubst procese la plantilla.
+#
+#  Se instala en /docker-entrypoint.d/ con prefijo 15 para ejecutarse ANTES de
+#  20-envsubst-on-templates.sh. La extension .envsh hace que el entrypoint de
+#  nginx lo cargue con `.` (source), de modo que el export sobrevive.
+#
+#  Motivo: en Render, la referencia entre servicios devuelve solo el nombre de
+#  host (carvajal-backend.onrender.com), sin esquema. proxy_pass exige una URL
+#  completa, asi que se antepone https:// cuando falta.
+#
+#  Los valores que ya traen esquema (docker-compose usa http://backend:8080) se
+#  dejan intactos.
+# =============================================================================
+set -eu
+
+case "${BACKEND_URL:-}" in
+    "" | *://*)
+        # Vacio o ya normalizado: nada que hacer.
+        ;;
+    *)
+        BACKEND_URL="https://${BACKEND_URL}"
+        export BACKEND_URL
+        echo "15-normalize-backend-url.envsh: BACKEND_URL normalizada a $BACKEND_URL"
+        ;;
+esac
