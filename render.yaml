@@ -69,10 +69,11 @@ services:
     dockerfilePath: ./carvajal-ecommerce/Dockerfile
     dockerContext: ./carvajal-ecommerce
     envVars:
-      # Destino del proxy /api. Se resuelve al dominio publico del backend, sin
-      # barra final para conservar el prefijo /api.
+      # Destino del proxy /api, sin barra final para conservar el prefijo /api.
+      #
+      # Valor literal a proposito: la referencia fromService a carvajal-backend
+      # no funciono en la practica (impidio que el servicio llegara a crearse y,
+      # una vez creado, dejo la variable sin resolver y el proxy devolvia 502).
+      # Si Render asigna otro dominio al backend, actualizar esta linea.
       - key: BACKEND_URL
-        fromService:
-          name: carvajal-backend
-          type: web
-          property: host
+        value: https://carvajal-backend-u9s0.onrender.com
