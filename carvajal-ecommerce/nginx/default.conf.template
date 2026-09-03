@@ -42,6 +42,17 @@ server {
         proxy_set_header   Host              $proxy_host;
         # SNI, necesario cuando BACKEND_URL es https:// (dominios de Render).
         proxy_ssl_server_name on;
+
+        # Se elimina la cabecera Origin (un valor vacio hace que nginx no la
+        # envie). Aunque la peticion es del mismo origen para el navegador,
+        # Chrome envia Origin en los POST, y el filtro CORS de Spring rechaza
+        # con 403 cualquier origen que no figure en allowedOrigins, que solo
+        # contempla http://localhost:4200. Al no reenviarla, el backend la trata
+        # como peticion normal y CORS no interviene, sea cual sea el dominio.
+        #
+        # No debilita nada: la autenticacion viaja en la cabecera Authorization
+        # (JWT), no en cookies, y CSRF esta deshabilitado.
+        proxy_set_header   Origin            "";
         proxy_set_header   X-Real-IP         $remote_addr;
         proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
         proxy_set_header   X-Forwarded-Proto $scheme;
