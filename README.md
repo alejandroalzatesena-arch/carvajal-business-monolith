@@ -49,14 +49,18 @@ carvajal-business-monolith/
 │   ├── src/app/core/                 # Servicios, guards, interceptor JWT, modelos
 │   ├── src/app/pages/                # login, register, catalog, wishlist, profile, admin
 │   ├── src/environments/             # environment.ts / environment.prod.ts (apiUrl)
-│   ├── nginx/default.conf.template   # Config de Nginx (SPA + proxy /api)  [DevOps]
+│   ├── nginx/
+│   │   ├── default.conf.template     # Nginx: SPA + proxy /api              [DevOps]
+│   │   └── 15-normalize-backend-url.envsh  # Antepone el esquema a BACKEND_URL [DevOps]
 │   ├── Dockerfile                    # Build Angular + Nginx                [DevOps]
 │   └── .dockerignore                                                       # [DevOps]
 │
 ├── Dockerfile                        # Backend multi-stage Java 17          [DevOps]
+├── docker-entrypoint.sh              # DATABASE_URL (libpq) -> JDBC         [DevOps]
 ├── .dockerignore                                                           # [DevOps]
 ├── docker-compose.yml                # SOLO desarrollo local                [DevOps]
 ├── railway.toml                      # Config del servicio backend Railway  [DevOps]
+├── render.yaml                       # Blueprint de Render (3 componentes)  [DevOps]
 ├── pom.xml
 ├── mvnw / mvnw.cmd
 └── README.md
@@ -269,9 +273,12 @@ No crees cuentas adicionales para renovar el crédito de prueba: incumple los
 términos de servicio de Railway y expone a que se suspendan todas las cuentas
 implicadas, incluida la que ya tenga el proyecto.
 
-Si solo necesitas demostrar la aplicación funcionando, el
-[despliegue local con Docker Compose](#opción-a--ejecución-local-con-docker-compose)
-levanta el sistema completo sin coste alguno.
+Si solo necesitas demostrar la aplicación funcionando hay dos alternativas sin
+coste: el
+[despliegue local con Docker Compose](#opción-a--ejecución-local-con-docker-compose),
+que levanta el sistema completo, o el
+[despliegue en Render](#despliegue-en-render-alternativa-gratuita-a-railway),
+que tiene plan gratuito y reutiliza los mismos `Dockerfile`.
 
 ### Paso 1 — Crear el proyecto
 
@@ -368,6 +375,82 @@ psql "$DATABASE_PUBLIC_URL" -f db/data.sql
 
 ---
 
+
+---
+
+## Despliegue en Render (alternativa gratuita a Railway)
+
+Render cubre los mismos tres componentes que Railway —PostgreSQL gestionado,
+backend y frontend— y tiene **plan gratuito**, por lo que sirve cuando el crédito
+de Railway se ha agotado. Las imágenes Docker son las mismas: no hay que
+mantener dos builds.
+
+El repositorio incluye `render.yaml`, un *Blueprint* que declara los tres
+componentes de una vez.
+
+### Limitaciones del plan gratuito
+
+- Los servicios web **se duermen tras 15 minutos sin tráfico**. La primera
+  petición después del reposo tarda bastante en responder (arranque en frío).
+- Las bases de datos gratuitas **caducan y se eliminan** pasado su periodo de
+  prueba. Para algo permanente hay que pasar a plan de pago.
+
+Para una demostración académica es suficiente; para algo estable, no.
+
+### Pasos
+
+1. Entra en <https://render.com> y conecta la cuenta de GitHub.
+2. **New → Blueprint** y selecciona el repositorio. Render detecta `render.yaml`
+   y propone los tres componentes: `carvajal-postgres`, `carvajal-backend` y
+   `carvajal-frontend`.
+3. Aplica el Blueprint. Render construye ambas imágenes desde sus `Dockerfile`.
+4. **Carga el esquema en la base de datos.** El backend arranca con
+   `ddl-auto=validate` y no crea tablas, así que hay que sembrarla antes de que
+   quede operativo. Copia la *External Database URL* desde el panel de
+   `carvajal-postgres` y ejecuta:
+
+   ```bash
+   psql "<External Database URL>" -f db/schema.sql
+   psql "<External Database URL>" -f db/data.sql
+   ```
+
+5. Reinicia `carvajal-backend` y comprueba la API:
+
+   ```bash
+   curl -s https://carvajal-backend.onrender.com/api/products
+   ```
+
+6. Abre el frontend en su dominio (`https://carvajal-frontend.onrender.com`).
+
+### Cómo encaja la configuración
+
+| Pieza | Qué resuelve |
+|---|---|
+| `DATABASE_URL` (`fromDatabase`) | Render entrega la conexión en formato libpq, que Spring no acepta. `docker-entrypoint.sh` la traduce a `SPRING_DATASOURCE_URL`, `..._USERNAME` y `..._PASSWORD` en el arranque. |
+| `JWT_SECRET` (`generateValue: true`) | Render genera el secreto y lo mantiene fuera del repositorio. |
+| `BACKEND_URL` (`fromService`) | Render devuelve solo el nombre de host, sin esquema. `nginx/15-normalize-backend-url.envsh` antepone `https://` antes de que `envsubst` procese la plantilla. |
+| `proxy_set_header Host $proxy_host` | El `Host` enviado debe ser el del backend. Con el del frontend, el router de Render no encontraría el servicio. |
+| `proxy_ssl_server_name on` | SNI, necesario al proxear hacia un upstream `https://`. |
+| `healthCheckPath: /api/products` | El backend no expone Actuator; este endpoint es público y consulta la BD, así que valida aplicación y conexión a la vez. |
+
+Igual que en Railway, la base de datos es **gestionada por la plataforma**. El
+servicio `postgres` de `docker-compose.yml` es solo para desarrollo local y no
+debe desplegarse.
+
+### Estado de verificación
+
+Lo que se ha comprobado ejecutándolo en local:
+
+- El backend arranca y sirve la API recibiendo **únicamente** `DATABASE_URL` en
+  formato libpq, sin `SPRING_DATASOURCE_*`.
+- Nginx normaliza `BACKEND_URL` sin esquema a `https://…` y genera una
+  configuración válida; con esquema explícito la respeta sin tocarla.
+- El stack de `docker-compose` sigue funcionando sin regresiones tras estos
+  cambios.
+
+Lo que **no** se ha ejecutado: el despliegue real en Render. La sintaxis del
+Blueprint (`fromDatabase`, `fromService`) no se ha validado contra la
+plataforma.
 ## CORS y `apiUrl` del frontend
 
 En local todo encaja: Angular sirve en `http://localhost:4200` y `SecurityConfig`
