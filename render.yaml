@@ -1,0 +1,68 @@
+# =============================================================================
+#  Render Blueprint — despliegue completo del monolito
+#
+#  Alternativa a Railway con PostgreSQL gestionado en plan gratuito.
+#  Render lee este archivo desde New > Blueprint y crea los tres componentes
+#  de una vez: base de datos, backend y frontend.
+#
+#  Igual que en Railway, la base de datos es GESTIONADA por la plataforma:
+#  el contenedor postgres de docker-compose.yml es solo para desarrollo local.
+#
+#  Aviso sobre el plan gratuito:
+#    - Los servicios web se duermen tras 15 min sin trafico; la primera
+#      peticion despues tarda bastante en responder.
+#    - Las bases de datos gratuitas de Render caducan y se eliminan pasado su
+#      periodo de prueba. Para algo permanente hay que pasar a plan de pago.
+# =============================================================================
+
+databases:
+  - name: carvajal-postgres
+    databaseName: carvajal_wishlist
+    user: carvajal
+    plan: free
+
+services:
+  # ---------------------------------------------------------------------------
+  # Backend Spring Boot. Se construye con el Dockerfile de la raiz.
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: carvajal-backend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    # El backend no expone Actuator; /api/products es publico y consulta la BD,
+    # asi que sirve de healthcheck real de "aplicacion + conexion a Postgres".
+    healthCheckPath: /api/products
+    envVars:
+      # Render entrega la conexion en formato libpq, no JDBC. docker-entrypoint.sh
+      # la traduce a SPRING_DATASOURCE_URL/USERNAME/PASSWORD en el arranque.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: carvajal-postgres
+          property: connectionString
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: validate
+      - key: JWT_EXPIRATION_MS
+        value: "86400000"
+      # Secreto: Render lo genera y lo mantiene fuera del repositorio.
+      - key: JWT_SECRET
+        generateValue: true
+
+  # ---------------------------------------------------------------------------
+  # Frontend Angular servido por Nginx, con proxy /api hacia el backend.
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: carvajal-frontend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./carvajal-ecommerce
+    envVars:
+      # Destino del proxy /api. Se resuelve al dominio publico del backend, sin
+      # barra final para conservar el prefijo /api.
+      - key: BACKEND_URL
+        fromService:
+          name: carvajal-backend
+          type: web
+          property: host

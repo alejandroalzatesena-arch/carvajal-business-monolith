@@ -31,6 +31,11 @@ COPY --from=build /app/dist/carvajal-ecommerce/browser /usr/share/nginx/html
 # El entrypoint de la imagen procesa esta plantilla con envsubst al arrancar.
 COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
 
+# Antepone el esquema a BACKEND_URL cuando la plataforma solo entrega el host
+# (caso de Render). El prefijo 15 lo situa antes del paso de envsubst (20).
+COPY nginx/15-normalize-backend-url.envsh /docker-entrypoint.d/15-normalize-backend-url.envsh
+RUN chmod +x /docker-entrypoint.d/15-normalize-backend-url.envsh
+
 # Opt-in para que el entrypoint exporte NGINX_LOCAL_RESOLVERS leyendo los
 # nameservers de /etc/resolv.conf (sin esto, la variable no se define).
 ENV NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1
