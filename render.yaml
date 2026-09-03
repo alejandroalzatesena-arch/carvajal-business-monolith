@@ -55,8 +55,10 @@ services:
   - type: web
     name: carvajal-frontend
     runtime: docker
+    # dockerfilePath se resuelve desde la RAIZ del repositorio, no desde
+    # dockerContext: hay que dar la ruta completa al Dockerfile del frontend.
     plan: free
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./carvajal-ecommerce/Dockerfile
     dockerContext: ./carvajal-ecommerce
     envVars:
       # Destino del proxy /api. Se resuelve al dominio publico del backend, sin
