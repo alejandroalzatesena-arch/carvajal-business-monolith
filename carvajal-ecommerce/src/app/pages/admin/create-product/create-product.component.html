@@ -1,16 +1,16 @@
 <div class="create-product">
 
-    <div class="card">
+    <h1>
 
-        <h1>
+        Nuevo producto
 
-            Nuevo Producto
+    </h1>
 
-        </h1>
-
-        <div class="row">
+    <div class="row">
 
             <div class="col-lg-8">
+
+                <div class="card">
 
                 <mat-form-field appearance="outline">
 
@@ -58,6 +58,8 @@
 
                             <mat-label>Precio</mat-label>
 
+                            <span matPrefix>$&nbsp;</span>
+
                             <input
                                 matInput
                                 type="number"
@@ -100,11 +102,14 @@
                 <button
                     mat-raised-button
                     color="primary"
+                    class="submit-btn"
                     (click)="saveProduct()">
 
-                    Guardar Producto
+                    Guardar producto
 
                 </button>
+
+                </div>
 
             </div>
 
@@ -112,26 +117,25 @@
 
                 <div class="preview">
 
+                    <span class="preview-label">Vista previa</span>
+
                     <img
-                        [src]="product.image">
+                        [src]="product.image"
+                        alt="Vista previa del producto">
 
                     <h3>
 
-                        Vista previa
+                        {{product.name || 'Nombre del producto'}}
 
                     </h3>
 
-                    <p>
+                    <p *ngIf="product.brand">{{ product.brand }}</p>
 
-                        {{product.name || 'Nombre del producto'}}
-
-                    </p>
+                    <p class="preview-price" *ngIf="product.price">${{ product.price }}</p>
 
                 </div>
 
             </div>
-
-        </div>
 
     </div>
 

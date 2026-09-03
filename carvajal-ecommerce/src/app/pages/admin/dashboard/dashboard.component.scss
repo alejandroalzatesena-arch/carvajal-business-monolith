@@ -1,93 +1,61 @@
-.dashboard{
-
-    padding:40px;
-
-    background:#f5f7fa;
-
-    min-height:100vh;
-
+// -------------------------------------------------------------
+// Dashboard: quiet KPI cards distinguished by icon chip color
+// only, not by card background, to avoid visual noise.
+// -------------------------------------------------------------
+.dashboard h1 {
+  margin-bottom: var(--space-6);
 }
 
-.dashboard h1{
-
-    font-weight:bold;
-
-    color:#1565C0;
-
-    margin-bottom:40px;
-
+.stat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
 }
 
-.stat-card{
-
-    border-radius:20px;
-
-    color:white;
-
-    text-align:center;
-
-    padding:35px;
-
-    margin-bottom:25px;
-
-    transition:.35s;
-
-    box-shadow:0 12px 25px rgba(0,0,0,.15);
-
+.stat-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
-.stat-card:hover{
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-4);
 
-    transform:translateY(-8px);
-
+  mat-icon { font-size: 24px; width: 24px; height: 24px; }
 }
 
-.stat-card mat-icon{
-
-    font-size:55px;
-
-    width:55px;
-
-    height:55px;
-
-    margin-bottom:15px;
-
+.stat-card h2 {
+  font-size: 2rem;
+  margin-bottom: var(--space-1);
 }
 
-.stat-card h2{
-
-    font-size:38px;
-
-    font-weight:bold;
-
+.stat-card p {
+  margin: 0;
+  color: var(--color-slate);
+  font-size: 0.875rem;
 }
 
-.stat-card p{
-
-    margin-top:10px;
-
-    font-size:18px;
-
+.welcome {
+  margin-top: var(--space-6);
+  background: var(--color-primary-dark);
+  color: #fff;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
 }
 
-.welcome{
-
-    margin-top:40px;
-
-    background:white;
-
-    padding:35px;
-
-    border-radius:20px;
-
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
-
+.welcome h2 {
+  color: #fff;
+  margin-bottom: var(--space-2);
 }
 
-.welcome h2{
-
-    color:#1565C0;
-
-    font-weight:bold;
-
+.welcome p {
+  color: #c3cee6;
+  margin: 0;
 }

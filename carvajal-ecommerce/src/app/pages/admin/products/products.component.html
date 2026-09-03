@@ -4,7 +4,7 @@
 
         <h1>
 
-            Administración de Productos
+            Administración de productos
 
         </h1>
 
@@ -19,7 +19,7 @@
 
             </mat-icon>
 
-            Nuevo Producto
+            Nuevo producto
 
         </button>
 
@@ -35,6 +35,8 @@
 
             </mat-label>
 
+            <mat-icon matPrefix>search</mat-icon>
+
             <input
                 matInput
                 [(ngModel)]="search">
@@ -42,6 +44,8 @@
         </mat-form-field>
 
     </div>
+
+    <div class="table-scroll">
 
     <table class="table table-hover align-middle">
 
@@ -68,13 +72,14 @@
                 <td>
 
                     <img
-                        [src]="product.image">
+                        [src]="product.image"
+                        [alt]="product.name">
 
                 </td>
 
                 <td>
 
-                    {{product.name}}
+                    <strong>{{product.name}}</strong>
 
                 </td>
 
@@ -111,11 +116,12 @@
 
                 </td>
 
-                <td>
+                <td class="actions-cell">
 
                     <button
                         mat-icon-button
-                        color="primary">
+                        color="primary"
+                        [attr.aria-label]="'Editar ' + product.name">
 
                         <mat-icon>
 
@@ -127,11 +133,12 @@
 
                     <button
                         mat-icon-button
-                        color="warn">
+                        color="warn"
+                        [attr.aria-label]="'Eliminar ' + product.name">
 
                         <mat-icon>
 
-                            Eliminar
+                            delete
 
                         </mat-icon>
 
@@ -144,5 +151,7 @@
         </tbody>
 
     </table>
+
+    </div>
 
 </div>

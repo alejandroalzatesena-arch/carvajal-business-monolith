@@ -10,6 +10,7 @@ import { AuthResponse } from '../../../core/guards/models/user';
 export class NavbarComponent implements OnInit {
   currentUser: AuthResponse | null = null;
   search = '';
+  mobileMenuOpen = false;
 
   menu = [
     { name: 'Inicio', route: '/' },
@@ -30,5 +31,13 @@ export class NavbarComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.mobileMenuOpen = false;
   }
 }

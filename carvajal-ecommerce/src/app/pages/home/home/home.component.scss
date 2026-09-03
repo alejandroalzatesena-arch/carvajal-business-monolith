@@ -1,193 +1,211 @@
+// -------------------------------------------------------------
+// Hero: split layout, real product photography, one bold moment
+// -------------------------------------------------------------
 .hero {
-    height: 550px;
-    background: linear-gradient(135deg, #1565C0, #42A5F5);
-    display: flex;
-    align-items: center;
-    color: white;
+  background: var(--color-primary-dark);
+  padding: var(--space-8) 0;
+  overflow: hidden;
+  position: relative;
 }
 
-.hero-content {
-
-    max-width: 650px;
-
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 15% 20%, rgba(37, 99, 235, 0.45), transparent 55%);
+  pointer-events: none;
 }
 
-.hero h1 {
-
-    font-size: 58px;
-    font-weight: 700;
-    margin-bottom: 20px;
-
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--space-7);
+  align-items: center;
+  position: relative;
 }
 
-.hero p {
+.hero-copy {
+  color: #fff;
 
-    font-size: 22px;
-    margin-bottom: 30px;
+  h1 {
+    color: #fff;
+    font-size: 3rem;
+    max-width: 15ch;
+    margin-bottom: var(--space-4);
+  }
 
+  p {
+    color: #c3cee6;
+    font-size: 1.125rem;
+    max-width: 46ch;
+    margin-bottom: var(--space-5);
+  }
 }
 
-.hero button {
+.hero-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-7);
 
-    padding: 15px 45px;
-    border-radius: 50px;
-    font-size: 18px;
-    font-weight: bold;
-    transition: .3s;
-
+  button { border-radius: var(--radius-pill) !important; padding: 0 var(--space-5) !important; height: 48px; }
 }
 
-.hero button:hover {
-
-    transform: translateY(-4px);
-
+.ghost-btn {
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
 }
 
+.hero-stats {
+  display: flex;
+  gap: var(--space-6);
+}
 
+.stat {
+  display: flex;
+  flex-direction: column;
+
+  strong {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: #fff;
+  }
+
+  span {
+    font-size: 0.8125rem;
+    color: #93a4c2;
+  }
+}
+
+.hero-visual {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  clip-path: polygon(6% 0, 100% 0, 100% 94%, 94% 100%, 0 100%, 0 6%);
+  box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+// -------------------------------------------------------------
+// Category quick-nav strip
+// -------------------------------------------------------------
 .categories {
-
-    margin-top: 80px;
-    margin-bottom: 80px;
-
+  padding: var(--space-8) var(--space-5);
 }
 
 .categories h2 {
-
-    text-align: center;
-    margin-bottom: 45px;
-    font-weight: bold;
-
+  margin-bottom: var(--space-5);
 }
 
-.category-card {
+.category-row { row-gap: var(--space-5); }
 
-    background: white;
-    border-radius: 20px;
-    padding: 30px;
-    text-align: center;
-    cursor: pointer;
-    transition: .35s;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, .08);
-    margin-bottom: 25px;
+.category-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-2);
+  text-align: center;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
 
+  &:hover { background: var(--color-primary-light); }
 }
 
-.category-card:hover {
+.tile-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
 
-    transform: translateY(-10px);
-
+  mat-icon { font-size: 26px; width: 26px; height: 26px; }
 }
 
-.category-card mat-icon {
-
-    font-size: 55px;
-    width: 55px;
-    height: 55px;
-    color: #1565C0;
-    margin-bottom: 20px;
-
+.category-tile h5 {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  margin: 0;
 }
 
-.category-card h5 {
-
-    font-weight: 600;
-
-}
-
-
+// -------------------------------------------------------------
+// Featured products
+// -------------------------------------------------------------
 .featured {
-
-    margin-bottom: 90px;
-
+  padding: 0 var(--space-5) var(--space-8);
 }
 
-.featured h2 {
+.featured h2 { margin-bottom: var(--space-5); }
 
-    text-align: center;
-    margin-bottom: 45px;
-    font-weight: bold;
+.product-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  height: 100%;
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
 
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+  }
 }
 
-mat-card {
+.product-media {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
 
-    border: none;
-    border-radius: 20px;
-    overflow: hidden;
-    transition: .35s;
-    margin-bottom: 30px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
-
+  img { width: 100%; height: 100%; object-fit: cover; }
 }
 
-mat-card:hover {
+.product-body { padding: var(--space-4); }
 
-    transform: translateY(-10px);
+.product-category {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8125rem;
+  color: var(--color-slate);
+  margin-bottom: var(--space-1);
 
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-primary);
+  }
 }
 
-mat-card img {
-
-    height: 250px;
-    object-fit: cover;
-
+.product-body h5 {
+  font-size: 1rem;
+  margin-bottom: var(--space-1);
 }
 
-mat-card-content {
-
-    padding: 20px;
-
+.product-price {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-accent-dark);
+  margin: 0;
 }
 
-mat-card-content h5 {
-
-    font-weight: 600;
-
-}
-
-mat-card-content h3 {
-
-    color: #1565C0;
-    font-weight: bold;
-    margin-top: 15px;
-
-}
-
-mat-card-actions {
-
-    padding: 20px;
-
-}
-
-mat-card-actions button {
-
-    width: 100%;
-    border-radius: 50px;
-
-}
-
-
-
-@media(max-width:992px) {
-
-    .hero {
-
-        text-align: center;
-        height: auto;
-        padding: 90px 0;
-
-    }
-
-    .hero h1 {
-
-        font-size: 42px;
-
-    }
-
-    .hero p {
-
-        font-size: 18px;
-
-    }
-
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-visual { order: -1; }
+  .hero-copy h1 { font-size: 2.25rem; }
+  .hero-stats { flex-wrap: wrap; gap: var(--space-5); }
 }

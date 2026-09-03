@@ -1,11 +1,10 @@
-
 <div class="admin-layout">
 
     <aside class="sidebar">
 
         <div class="logo">
 
-            <mat-icon>storefront</mat-icon>
+            <mat-icon>memory</mat-icon>
 
             <span>Carvajal Admin</span>
 
@@ -13,7 +12,7 @@
 
         <ul>
 
-            <li routerLink="/admin/dashboard">
+            <li routerLink="/admin/dashboard" routerLinkActive="is-active">
 
                 <mat-icon>dashboard</mat-icon>
 
@@ -21,7 +20,7 @@
 
             </li>
 
-            <li routerLink="/admin/products">
+            <li routerLink="/admin/products" routerLinkActive="is-active">
 
                 <mat-icon>inventory_2</mat-icon>
 
@@ -29,7 +28,7 @@
 
             </li>
 
-            <li routerLink="/admin/users">
+            <li routerLink="/admin/users" routerLinkActive="is-active">
 
                 <mat-icon>people</mat-icon>
 
@@ -37,7 +36,7 @@
 
             </li>
 
-            <li routerLink="/admin/history">
+            <li routerLink="/admin/history" routerLinkActive="is-active">
 
                 <mat-icon>history</mat-icon>
 
@@ -46,6 +45,14 @@
             </li>
 
         </ul>
+
+        <a class="back-store" routerLink="/">
+
+            <mat-icon>arrow_back</mat-icon>
+
+            Volver a la tienda
+
+        </a>
 
     </aside>
 

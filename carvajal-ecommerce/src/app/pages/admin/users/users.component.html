@@ -4,7 +4,7 @@
 
         <h1>
 
-            Gestión de Usuarios
+            Gestión de usuarios
 
         </h1>
 
@@ -20,6 +20,8 @@
 
             </mat-label>
 
+            <mat-icon matPrefix>search</mat-icon>
+
             <input
                 matInput
                 [(ngModel)]="search">
@@ -27,6 +29,8 @@
         </mat-form-field>
 
     </div>
+
+    <div class="table-scroll">
 
     <table class="table table-hover align-middle">
 
@@ -53,7 +57,7 @@
 
                 <td>{{user.id}}</td>
 
-                <td>{{user.name}}</td>
+                <td><strong>{{user.name}}</strong></td>
 
                 <td>{{user.email}}</td>
 
@@ -89,11 +93,12 @@
 
                 </td>
 
-                <td>
+                <td class="actions-cell">
 
                     <button
                         mat-icon-button
-                        color="primary">
+                        color="primary"
+                        [attr.aria-label]="'Editar ' + user.name">
 
                         <mat-icon>
 
@@ -105,11 +110,12 @@
 
                     <button
                         mat-icon-button
-                        color="warn">
+                        color="warn"
+                        [attr.aria-label]="'Eliminar ' + user.name">
 
                         <mat-icon>
 
-                            Eliminar
+                            delete
 
                         </mat-icon>
 
@@ -122,5 +128,7 @@
         </tbody>
 
     </table>
+
+    </div>
 
 </div>

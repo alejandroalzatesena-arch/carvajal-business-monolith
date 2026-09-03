@@ -19,14 +19,6 @@ public class CustomUserDetails implements UserDetails {
         this.password = password;
     }
 
-    /**
-     * Variante para el filtro JWT: el token ya viene validado, de modo que no
-     * se comprueban credenciales y no hace falta cargar el hash desde la BD.
-     */
-    public CustomUserDetails(Long userId, String email) {
-        this(userId, email, "");
-    }
-
     public Long getUserId() {
         return userId;
     }

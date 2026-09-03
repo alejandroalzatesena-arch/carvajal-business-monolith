@@ -3,14 +3,14 @@
     <div class="row">
       <div class="col-lg-4">
         <div class="profile-card">
-          <img src="assets/images/user.png">
+          <img src="assets/images/user.png" alt="Foto de perfil">
           <h2>{{ user?.fullName }}</h2>
           <p>{{ user?.email }}</p>
         </div>
       </div>
       <div class="col-lg-8">
         <div class="info-card">
-          <h3>Mi Perfil</h3>
+          <h3>Información de la cuenta</h3>
           <div class="row">
             <div class="col-md-6">
               <mat-form-field appearance="outline">
@@ -20,7 +20,7 @@
             </div>
             <div class="col-md-6">
               <mat-form-field appearance="outline">
-                <mat-label>Email</mat-label>
+                <mat-label>Correo electrónico</mat-label>
                 <input matInput [value]="user?.email" readonly>
               </mat-form-field>
             </div>
