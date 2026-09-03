@@ -1,2 +1,8 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
+
+# Los scripts de contenedor se ejecutan en Linux: con CRLF fallarian con
+# "bad interpreter". Se fuerza LF aunque se clonen en Windows.
+*.sh text eol=lf
+*.envsh text eol=lf
+docker-entrypoint.sh text eol=lf

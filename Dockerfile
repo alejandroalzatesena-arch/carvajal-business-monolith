@@ -33,7 +33,10 @@ WORKDIR /app
 RUN addgroup -S spring && adduser -S spring -G spring
 
 COPY --from=build /build/target/*.jar /app/app.jar
-RUN chown -R spring:spring /app
+# El entrypoint traduce DATABASE_URL (formato libpq de Render/Heroku/Fly) a la
+# URL JDBC y las credenciales que espera Spring. Ver docker-entrypoint.sh.
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh && chown -R spring:spring /app
 USER spring
 
 # PORT: en local vale 8080; Railway lo inyecta dinamicamente en el arranque.
@@ -43,5 +46,6 @@ ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0"
 
 EXPOSE 8080
 
-# `exec` deja a la JVM como PID 1 para que reciba SIGTERM y apague limpiamente.
-ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -Dserver.port=$PORT -jar /app/app.jar"]
+# El script termina con `exec java`, de modo que la JVM queda como PID 1 y
+# recibe SIGTERM para apagarse limpiamente.
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
