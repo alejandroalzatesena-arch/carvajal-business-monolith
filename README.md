@@ -258,6 +258,21 @@ Proyecto Railway
 > ofrece PostgreSQL gestionado con volumen persistente, backups y credenciales
 > rotables: eso es lo que se debe usar.
 
+### Paso 0 — Coste (léelo antes de empezar)
+
+**Railway no tiene plan gratuito permanente.** Ofrece un crédito de prueba de un
+solo uso y, agotado, hay que pasar a un plan de pago (Hobby, ~5 USD/mes más
+consumo) para mantener los servicios vivos. Los tres componentes de este
+proyecto —PostgreSQL gestionado, backend y frontend— consumen de ese saldo.
+
+No crees cuentas adicionales para renovar el crédito de prueba: incumple los
+términos de servicio de Railway y expone a que se suspendan todas las cuentas
+implicadas, incluida la que ya tenga el proyecto.
+
+Si solo necesitas demostrar la aplicación funcionando, el
+[despliegue local con Docker Compose](#opción-a--ejecución-local-con-docker-compose)
+levanta el sistema completo sin coste alguno.
+
 ### Paso 1 — Crear el proyecto
 
 1. Entra en <https://railway.app> y pulsa **New Project**.
