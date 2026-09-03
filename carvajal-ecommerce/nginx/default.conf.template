@@ -35,7 +35,13 @@ server {
         set $upstream      ${BACKEND_URL};
         proxy_pass         $upstream$request_uri;
         proxy_http_version 1.1;
-        proxy_set_header   Host              $host;
+
+        # $proxy_host, no $host: el Host debe ser el del upstream. Plataformas
+        # como Render enrutan por nombre, y reenviar el host del frontend haria
+        # que no encontrasen el servicio backend.
+        proxy_set_header   Host              $proxy_host;
+        # SNI, necesario cuando BACKEND_URL es https:// (dominios de Render).
+        proxy_ssl_server_name on;
         proxy_set_header   X-Real-IP         $remote_addr;
         proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
         proxy_set_header   X-Forwarded-Proto $scheme;
