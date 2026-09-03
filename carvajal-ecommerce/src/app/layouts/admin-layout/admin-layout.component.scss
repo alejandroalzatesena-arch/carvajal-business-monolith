@@ -1,0 +1,95 @@
+// -------------------------------------------------------------
+// Admin shell: dark sidebar + light content canvas
+// -------------------------------------------------------------
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-canvas);
+}
+
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--color-primary-dark);
+  color: #cbd5e1;
+  padding: var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #fff;
+  padding: 0 var(--space-3);
+  margin-bottom: var(--space-6);
+
+  mat-icon { color: var(--color-accent); }
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  margin-bottom: var(--space-1);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+  }
+
+  &.is-active {
+    background: rgba(245, 158, 11, 0.12);
+    border-left-color: var(--color-accent);
+    color: #fff;
+  }
+}
+
+.back-store {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  color: #93a4c2;
+  font-size: 0.875rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: var(--space-4);
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+  &:hover { color: #fff; text-decoration: none; }
+}
+
+.content {
+  flex: 1;
+  padding: var(--space-6);
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .admin-layout { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: relative; }
+  .content { padding: var(--space-4); }
+}

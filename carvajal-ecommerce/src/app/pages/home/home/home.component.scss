@@ -1,0 +1,211 @@
+// -------------------------------------------------------------
+// Hero: split layout, real product photography, one bold moment
+// -------------------------------------------------------------
+.hero {
+  background: var(--color-primary-dark);
+  padding: var(--space-8) 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 15% 20%, rgba(37, 99, 235, 0.45), transparent 55%);
+  pointer-events: none;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--space-7);
+  align-items: center;
+  position: relative;
+}
+
+.hero-copy {
+  color: #fff;
+
+  h1 {
+    color: #fff;
+    font-size: 3rem;
+    max-width: 15ch;
+    margin-bottom: var(--space-4);
+  }
+
+  p {
+    color: #c3cee6;
+    font-size: 1.125rem;
+    max-width: 46ch;
+    margin-bottom: var(--space-5);
+  }
+}
+
+.hero-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-7);
+
+  button { border-radius: var(--radius-pill) !important; padding: 0 var(--space-5) !important; height: 48px; }
+}
+
+.ghost-btn {
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.hero-stats {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+
+  strong {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: #fff;
+  }
+
+  span {
+    font-size: 0.8125rem;
+    color: #93a4c2;
+  }
+}
+
+.hero-visual {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  clip-path: polygon(6% 0, 100% 0, 100% 94%, 94% 100%, 0 100%, 0 6%);
+  box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+// -------------------------------------------------------------
+// Category quick-nav strip
+// -------------------------------------------------------------
+.categories {
+  padding: var(--space-8) var(--space-5);
+}
+
+.categories h2 {
+  margin-bottom: var(--space-5);
+}
+
+.category-row { row-gap: var(--space-5); }
+
+.category-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-2);
+  text-align: center;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+
+  &:hover { background: var(--color-primary-light); }
+}
+
+.tile-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+
+  mat-icon { font-size: 26px; width: 26px; height: 26px; }
+}
+
+.category-tile h5 {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+// -------------------------------------------------------------
+// Featured products
+// -------------------------------------------------------------
+.featured {
+  padding: 0 var(--space-5) var(--space-8);
+}
+
+.featured h2 { margin-bottom: var(--space-5); }
+
+.product-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  height: 100%;
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+  }
+}
+
+.product-media {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+
+  img { width: 100%; height: 100%; object-fit: cover; }
+}
+
+.product-body { padding: var(--space-4); }
+
+.product-category {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8125rem;
+  color: var(--color-slate);
+  margin-bottom: var(--space-1);
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-primary);
+  }
+}
+
+.product-body h5 {
+  font-size: 1rem;
+  margin-bottom: var(--space-1);
+}
+
+.product-price {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-accent-dark);
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-visual { order: -1; }
+  .hero-copy h1 { font-size: 2.25rem; }
+  .hero-stats { flex-wrap: wrap; gap: var(--space-5); }
+}

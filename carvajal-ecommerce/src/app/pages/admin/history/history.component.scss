@@ -1,0 +1,58 @@
+.history h1 {
+  margin-bottom: var(--space-5);
+}
+
+.state-block mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: var(--color-slate-light);
+}
+
+.history-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+  transition: box-shadow var(--transition-base);
+}
+
+.history-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.icon-accent { background: var(--color-warning-bg); color: var(--color-warning); }
+.icon-warn { background: var(--color-danger-bg); color: var(--color-danger); }
+
+.content { flex: 1; }
+
+.content h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.content p {
+  margin: var(--space-1) 0;
+  color: var(--color-slate);
+}
+
+.content small {
+  color: var(--color-slate-light);
+  font-size: 0.75rem;
+}

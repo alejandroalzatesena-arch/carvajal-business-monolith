@@ -1,0 +1,49 @@
+<section class="catalog">
+  <div class="container">
+    <div class="catalog-header">
+      <div>
+        <h1>Catálogo</h1>
+        <p class="subtitle">{{ filteredProducts.length }} productos disponibles</p>
+      </div>
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput placeholder="Buscar productos..." [(ngModel)]="search">
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="loading" class="state-block">
+      <mat-spinner diameter="36"></mat-spinner>
+      <p>Cargando productos...</p>
+    </div>
+
+    <div *ngIf="!loading && filteredProducts.length === 0" class="state-block">
+      <mat-icon>search_off</mat-icon>
+      <p>No se encontraron productos.</p>
+    </div>
+
+    <div class="row" *ngIf="!loading">
+      <div class="col-lg-3 col-md-6" *ngFor="let product of filteredProducts">
+        <div class="product-card">
+          <div class="product-media">
+            <img [src]="product.imageUrl || 'assets/images/no-image.png'" [alt]="product.name">
+            <span class="stock-pill" [class]="'stock-' + getStockColor(product.stock)">
+              {{ getStockLabel(product.stock) }}
+            </span>
+          </div>
+          <div class="product-body">
+            <div class="product-category"><span class="dot"></span>{{ product.category }}</div>
+            <h4>{{ product.name }}</h4>
+            <p class="description">{{ product.description }}</p>
+            <div class="product-footer">
+              <p class="price">${{ product.price | number:'1.0-0' }}</p>
+              <button mat-fab extended color="accent" class="add-btn" (click)="addToWishlist(product)" [disabled]="product.stock === 0">
+                <mat-icon>favorite</mat-icon>
+                Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

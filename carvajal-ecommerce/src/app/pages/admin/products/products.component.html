@@ -1,0 +1,157 @@
+<div class="products">
+
+    <div class="header">
+
+        <h1>
+
+            Administración de productos
+
+        </h1>
+
+        <button
+            mat-raised-button
+            color="primary"
+            routerLink="/admin/create-product">
+
+            <mat-icon>
+
+                add
+
+            </mat-icon>
+
+            Nuevo producto
+
+        </button>
+
+    </div>
+
+    <div class="search">
+
+        <mat-form-field appearance="outline">
+
+            <mat-label>
+
+                Buscar producto
+
+            </mat-label>
+
+            <mat-icon matPrefix>search</mat-icon>
+
+            <input
+                matInput
+                [(ngModel)]="search">
+
+        </mat-form-field>
+
+    </div>
+
+    <div class="table-scroll">
+
+    <table class="table table-hover align-middle">
+
+        <thead>
+
+            <tr>
+
+                <th>Imagen</th>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Marca</th>
+                <th>Stock</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <tr *ngFor="let product of products">
+
+                <td>
+
+                    <img
+                        [src]="product.image"
+                        [alt]="product.name">
+
+                </td>
+
+                <td>
+
+                    <strong>{{product.name}}</strong>
+
+                </td>
+
+                <td>
+
+                    {{product.category}}
+
+                </td>
+
+                <td>
+
+                    {{product.brand}}
+
+                </td>
+
+                <td>
+
+                    <span
+                        class="badge bg-success">
+
+                        {{product.stock}}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <strong>
+
+                        {{product.price}}
+
+                    </strong>
+
+                </td>
+
+                <td class="actions-cell">
+
+                    <button
+                        mat-icon-button
+                        color="primary"
+                        [attr.aria-label]="'Editar ' + product.name">
+
+                        <mat-icon>
+
+                            edit
+
+                        </mat-icon>
+
+                    </button>
+
+                    <button
+                        mat-icon-button
+                        color="warn"
+                        [attr.aria-label]="'Eliminar ' + product.name">
+
+                        <mat-icon>
+
+                            delete
+
+                        </mat-icon>
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+    </div>
+
+</div>

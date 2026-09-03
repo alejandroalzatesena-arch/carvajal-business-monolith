@@ -1,0 +1,64 @@
+h1 { margin-bottom: var(--space-5); }
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: var(--space-1);
+}
+
+.submit-btn {
+  width: 100%;
+  height: 48px;
+  border-radius: var(--radius-pill) !important;
+  font-weight: 600;
+  margin-top: var(--space-3);
+}
+
+.preview {
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  text-align: center;
+  position: sticky;
+  top: var(--space-5);
+}
+
+.preview-label {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-slate);
+  margin-bottom: var(--space-3);
+}
+
+.preview img {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  margin-bottom: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-canvas);
+}
+
+.preview h3 {
+  font-size: 1.125rem;
+  margin-bottom: var(--space-1);
+}
+
+.preview p {
+  margin: 0 0 var(--space-1);
+}
+
+.preview-price {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-accent-dark);
+  font-size: 1.25rem;
+}

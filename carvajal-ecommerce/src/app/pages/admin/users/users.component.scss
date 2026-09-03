@@ -1,0 +1,13 @@
+.header { margin-bottom: var(--space-5); }
+.header h1 { margin: 0; }
+
+.search { margin-bottom: var(--space-5); }
+.search mat-form-field { width: 340px; }
+
+.table-scroll { overflow-x: auto; }
+
+.actions-cell { white-space: nowrap; }
+
+@media (max-width: 768px) {
+  .search mat-form-field { width: 100%; }
+}

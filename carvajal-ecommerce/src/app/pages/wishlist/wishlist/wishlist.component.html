@@ -1,0 +1,52 @@
+<section class="wishlist">
+  <div class="container">
+    <h1>Mi lista de deseos</h1>
+
+    <div *ngIf="loading" class="state-block">
+      <mat-spinner diameter="36"></mat-spinner>
+      <p>Cargando lista...</p>
+    </div>
+
+    <div *ngIf="!loading && items.length === 0" class="state-block">
+      <mat-icon>favorite_border</mat-icon>
+      <p>Todavía no tienes productos agregados. Visita el <a routerLink="/catalog">catálogo</a> para agregar productos.</p>
+    </div>
+
+    <div class="row" *ngIf="!loading && items.length > 0">
+      <div class="col-lg-4 col-md-6" *ngFor="let item of items">
+        <div class="wishlist-card" [class.out-of-stock]="isOutOfStock(item)" [class.insufficient-stock]="isInsufficientStock(item)">
+          <div class="wishlist-body">
+            <h4>{{ item.productName }}</h4>
+            <p class="price">${{ item.productPrice | number:'1.0-0' }}</p>
+
+            <div class="stock-notification" *ngIf="isOutOfStock(item)">
+              <mat-icon color="warn">warning</mat-icon>
+              <span>Sin stock disponible</span>
+            </div>
+            <div class="stock-notification is-warning" *ngIf="isInsufficientStock(item)">
+              <mat-icon>info</mat-icon>
+              <span>{{ item.stockStatus }}</span>
+            </div>
+
+            <div class="quantity-controls">
+              <button mat-icon-button aria-label="Disminuir cantidad" (click)="updateQuantity(item, item.desiredQuantity - 1)" [disabled]="item.desiredQuantity <= 1">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <span class="qty">{{ item.desiredQuantity }}</span>
+              <button mat-icon-button aria-label="Aumentar cantidad" (click)="updateQuantity(item, item.desiredQuantity + 1)" [disabled]="item.desiredQuantity >= item.availableStock">
+                <mat-icon>add</mat-icon>
+              </button>
+              <small class="stock-info">Stock disponible: {{ item.availableStock }}</small>
+            </div>
+          </div>
+          <div class="wishlist-actions">
+            <button mat-button color="warn" aria-label="Eliminar de la lista de deseos" (click)="removeItem(item)">
+              <mat-icon>delete_outline</mat-icon>
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

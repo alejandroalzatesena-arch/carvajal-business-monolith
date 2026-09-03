@@ -1,0 +1,65 @@
+<div class="dashboard">
+
+    <h1>
+
+        Panel administrativo
+
+    </h1>
+
+    <div class="row">
+
+        <div
+            class="col-lg-3 col-md-6"
+            *ngFor="let item of stats">
+
+            <div class="stat-card">
+
+                <div
+                    class="stat-icon"
+                    [style.background]="item.color + '1a'"
+                    [style.color]="item.color">
+
+                    <mat-icon>
+
+                        {{item.icon}}
+
+                    </mat-icon>
+
+                </div>
+
+                <h2>
+
+                    {{item.value}}
+
+                </h2>
+
+                <p>
+
+                    {{item.title}}
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="welcome">
+
+        <h2>
+
+            Bienvenido, administrador
+
+        </h2>
+
+        <p>
+
+            Desde este panel podrás administrar los productos,
+            usuarios e historial del e-commerce.
+
+        </p>
+
+    </div>
+
+</div>

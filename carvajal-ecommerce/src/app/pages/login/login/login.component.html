@@ -1,0 +1,37 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-image">
+      <img src="assets/images/login.png" alt="Carvajal Tech">
+    </div>
+    <div class="login-form">
+      <div class="brand-mark">
+        <mat-icon>memory</mat-icon>
+        Carvajal Tech
+      </div>
+      <h1>Bienvenido de nuevo</h1>
+      <p>Inicia sesión para acceder a tu cuenta y tu lista de deseos.</p>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Correo electrónico</mat-label>
+        <input matInput [(ngModel)]="email" type="email">
+        <mat-icon matSuffix>email</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Contraseña</mat-label>
+        <input matInput [type]="hidePassword ? 'password':'text'" [(ngModel)]="password">
+        <button mat-icon-button matSuffix (click)="hidePassword=!hidePassword" type="button" [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'">
+          <mat-icon>{{hidePassword ? 'visibility':'visibility_off'}}</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" class="login-button" (click)="login()" [disabled]="loading">
+        {{ loading ? 'Ingresando...' : 'Iniciar sesión' }}
+      </button>
+
+      <div class="register-link">
+        ¿No tienes cuenta? <a routerLink="/register">Regístrate</a>
+      </div>
+    </div>
+  </div>
+</div>

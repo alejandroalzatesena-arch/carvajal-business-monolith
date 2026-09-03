@@ -1,0 +1,134 @@
+<div class="users">
+
+    <div class="header">
+
+        <h1>
+
+            Gestión de usuarios
+
+        </h1>
+
+    </div>
+
+    <div class="search">
+
+        <mat-form-field appearance="outline">
+
+            <mat-label>
+
+                Buscar usuario
+
+            </mat-label>
+
+            <mat-icon matPrefix>search</mat-icon>
+
+            <input
+                matInput
+                [(ngModel)]="search">
+
+        </mat-form-field>
+
+    </div>
+
+    <div class="table-scroll">
+
+    <table class="table table-hover align-middle">
+
+        <thead>
+
+            <tr>
+
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Ciudad</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <tr *ngFor="let user of users">
+
+                <td>{{user.id}}</td>
+
+                <td><strong>{{user.name}}</strong></td>
+
+                <td>{{user.email}}</td>
+
+                <td>{{user.phone}}</td>
+
+                <td>{{user.city}}</td>
+
+                <td>
+
+                    <span
+                        class="badge"
+                        [ngClass]="user.role=='Administrador'
+                        ? 'bg-primary'
+                        : 'bg-secondary'">
+
+                        {{user.role}}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <span
+                        class="badge"
+                        [ngClass]="user.status=='Activo'
+                        ? 'bg-success'
+                        : 'bg-danger'">
+
+                        {{user.status}}
+
+                    </span>
+
+                </td>
+
+                <td class="actions-cell">
+
+                    <button
+                        mat-icon-button
+                        color="primary"
+                        [attr.aria-label]="'Editar ' + user.name">
+
+                        <mat-icon>
+
+                            edit
+
+                        </mat-icon>
+
+                    </button>
+
+                    <button
+                        mat-icon-button
+                        color="warn"
+                        [attr.aria-label]="'Eliminar ' + user.name">
+
+                        <mat-icon>
+
+                            delete
+
+                        </mat-icon>
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+    </div>
+
+</div>

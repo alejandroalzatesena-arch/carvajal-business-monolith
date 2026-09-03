@@ -1,0 +1,83 @@
+.login-page {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 1000px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  box-shadow: var(--shadow-lg);
+}
+
+.login-image {
+  background: var(--color-primary-light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-6);
+}
+
+.login-image img {
+  width: 100%;
+  border-radius: var(--radius-md);
+}
+
+.login-form {
+  padding: var(--space-7) var(--space-6);
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-mark {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--space-5);
+}
+
+.login-form h1 {
+  font-size: 2rem;
+  margin-bottom: var(--space-2);
+}
+
+.login-form p {
+  margin-bottom: var(--space-5);
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: var(--space-3);
+}
+
+.login-button {
+  height: 48px;
+  border-radius: var(--radius-pill) !important;
+  margin-top: var(--space-2);
+  font-weight: 600;
+}
+
+.register-link {
+  margin-top: var(--space-5);
+  text-align: center;
+  color: var(--color-slate);
+}
+
+.register-link a {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .login-card { grid-template-columns: 1fr; }
+  .login-image { display: none; }
+  .login-form { padding: var(--space-5); }
+}
