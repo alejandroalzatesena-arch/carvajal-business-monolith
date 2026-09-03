@@ -43,6 +43,14 @@ services:
           property: connectionString
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
         value: validate
+      # El backend crea y siembra su propio esquema al arrancar, de modo que no
+      # hay que cargar los .sql a mano contra la base de datos gestionada.
+      # Spring ejecuta este script ANTES de que Hibernate valide, y es
+      # idempotente: repetirlo en cada arranque no borra ni duplica nada.
+      - key: SPRING_SQL_INIT_MODE
+        value: always
+      - key: SPRING_SQL_INIT_SCHEMA_LOCATIONS
+        value: file:/app/db/cloud-init.sql
       - key: JWT_EXPIRATION_MS
         value: "86400000"
       # Secreto: Render lo genera y lo mantiene fuera del repositorio.

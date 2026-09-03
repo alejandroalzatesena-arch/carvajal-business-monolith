@@ -27,9 +27,11 @@ CLAUDE.md
 # El frontend tiene su propio contexto de build (carvajal-ecommerce/Dockerfile)
 carvajal-ecommerce/
 
-# Scripts SQL: se cargan en Postgres via docker-compose o psql,
-# no forman parte de la imagen del backend (ddl-auto=validate).
-db/
+# Scripts SQL: schema.sql y data.sql se cargan en Postgres via docker-compose,
+# no hacen falta dentro de la imagen. La excepcion es cloud-init.sql, que el
+# backend ejecuta al arrancar en la nube para sembrarse solo.
+db/**
+!db/cloud-init.sql
 
 # Ficheros de infraestructura y documentacion
 Dockerfile
