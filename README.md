@@ -43,6 +43,7 @@ carvajal-business-monolith/
 ├── db/
 │   ├── schema.sql                    # DDL: tablas, FKs, índices
 │   ├── data.sql                      # Datos de prueba (1 usuario + 15 productos)
+│   ├── cloud-init.sql                # Igual, pero idempotente, para la nube [DevOps]
 │   └── MODELO_BASE_DATOS.md          # Diagrama ER y explicación del modelo
 │
 ├── carvajal-ecommerce/               # Frontend Angular 17
@@ -388,10 +389,14 @@ mantener dos builds.
 El repositorio incluye `render.yaml`, un *Blueprint* que declara los tres
 componentes de una vez.
 
+**Este despliegue está ejecutado y verificado en producción**, no solo
+documentado. Ver *Estado de verificación* al final de la sección.
+
 ### Limitaciones del plan gratuito
 
 - Los servicios web **se duermen tras 15 minutos sin tráfico**. La primera
   petición después del reposo tarda bastante en responder (arranque en frío).
+  Si vas a hacer una demostración, despierta la aplicación unos minutos antes.
 - Las bases de datos gratuitas **caducan y se eliminan** pasado su periodo de
   prueba. Para algo permanente hay que pasar a plan de pago.
 
@@ -400,27 +405,38 @@ Para una demostración académica es suficiente; para algo estable, no.
 ### Pasos
 
 1. Entra en <https://render.com> y conecta la cuenta de GitHub.
-2. **New → Blueprint** y selecciona el repositorio. Render detecta `render.yaml`
-   y propone los tres componentes: `carvajal-postgres`, `carvajal-backend` y
-   `carvajal-frontend`.
-3. Aplica el Blueprint. Render construye ambas imágenes desde sus `Dockerfile`.
-4. **Carga el esquema en la base de datos.** El backend arranca con
-   `ddl-auto=validate` y no crea tablas, así que hay que sembrarla antes de que
-   quede operativo. Copia la *External Database URL* desde el panel de
-   `carvajal-postgres` y ejecuta:
+2. **New → Blueprint** y selecciona el repositorio. El campo *Branch* debe
+   apuntar a la rama que contenga `render.yaml` (`main`).
+3. Pon un **Blueprint Name** (es obligatorio) y aplica. Render construye ambas
+   imágenes desde sus `Dockerfile` y crea la base de datos.
+4. Espera a que `carvajal-backend` quede en **live**. No hay que sembrar la base
+   de datos a mano: el backend lo hace solo (ver más abajo).
+5. Abre el frontend en su dominio. Toda la aplicación se sirve desde ahí,
+   incluida la API a través del proxy `/api`.
 
-   ```bash
-   psql "<External Database URL>" -f db/schema.sql
-   psql "<External Database URL>" -f db/data.sql
-   ```
+Si algún servicio no aparece tras aplicar el Blueprint, entra en **Blueprints →
+Manual Sync** para que Render relea `render.yaml` y cree lo que falte.
 
-5. Reinicia `carvajal-backend` y comprueba la API:
+### La base de datos se siembra sola
 
-   ```bash
-   curl -s https://carvajal-backend.onrender.com/api/products
-   ```
+El backend arranca con `ddl-auto=validate` y no crea tablas, así que una base de
+datos gestionada recién creada lo dejaría en `failed` con
+`Schema-validation: missing table [products]`.
 
-6. Abre el frontend en su dominio (`https://carvajal-frontend.onrender.com`).
+Para evitar el paso manual, `db/cloud-init.sql` contiene el esquema y los datos
+de demostración en versión **idempotente**: `CREATE TABLE IF NOT EXISTS`,
+`INSERT ... ON CONFLICT DO NOTHING` y ningún `DROP`. `docker-entrypoint.sh` lo
+activa al detectar el caso de nube —hay `DATABASE_URL` y no hay
+`SPRING_DATASOURCE_URL`— y Spring lo ejecuta antes de que Hibernate valide.
+
+Consecuencias prácticas:
+
+- No hay que ejecutar `psql` contra la base de datos gestionada.
+- Repetirlo en cada arranque no duplica filas ni borra datos de usuario.
+- **No reutiliza `db/schema.sql`** a propósito: ese script empieza con
+  `DROP TABLE`, y ejecutarlo en cada arranque vaciaría la base de datos entera.
+- En local no interviene: `docker-compose` carga `schema.sql` y `data.sql` por
+  `docker-entrypoint-initdb.d` y no define `SPRING_SQL_INIT_MODE`.
 
 ### Cómo encaja la configuración
 
@@ -428,7 +444,9 @@ Para una demostración académica es suficiente; para algo estable, no.
 |---|---|
 | `DATABASE_URL` (`fromDatabase`) | Render entrega la conexión en formato libpq, que Spring no acepta. `docker-entrypoint.sh` la traduce a `SPRING_DATASOURCE_URL`, `..._USERNAME` y `..._PASSWORD` en el arranque. |
 | `JWT_SECRET` (`generateValue: true`) | Render genera el secreto y lo mantiene fuera del repositorio. |
-| `BACKEND_URL` (`fromService`) | Render devuelve solo el nombre de host, sin esquema. `nginx/15-normalize-backend-url.envsh` antepone `https://` antes de que `envsubst` procese la plantilla. |
+| Autosiembra activada en el entrypoint | `SPRING_SQL_INIT_MODE` solo en `render.yaml` no basta: esas variables requieren resincronizar el Blueprint. Activarla dentro del contenedor la hace independiente de la plataforma. |
+| `BACKEND_URL` (valor literal) | Destino del proxy `/api`, sin barra final. Ver la nota sobre `fromService` más abajo. |
+| `nginx/15-normalize-backend-url.envsh` | Antepone `https://` si el valor llega sin esquema, antes de que `envsubst` procese la plantilla; `proxy_pass` exige una URL completa. |
 | `proxy_set_header Host $proxy_host` | El `Host` enviado debe ser el del backend. Con el del frontend, el router de Render no encontraría el servicio. |
 | `proxy_ssl_server_name on` | SNI, necesario al proxear hacia un upstream `https://`. |
 | `healthCheckPath: /api/products` | El backend no expone Actuator; este endpoint es público y consulta la BD, así que valida aplicación y conexión a la vez. |
@@ -437,20 +455,47 @@ Igual que en Railway, la base de datos es **gestionada por la plataforma**. El
 servicio `postgres` de `docker-compose.yml` es solo para desarrollo local y no
 debe desplegarse.
 
+### `BACKEND_URL` es un valor fijo, y hay que mantenerlo
+
+`render.yaml` define `BACKEND_URL` con el dominio del backend escrito a mano.
+La alternativa natural —una referencia `fromService` a `carvajal-backend`— se
+probó y **no funcionó**: impidió que el servicio del frontend llegara a crearse
+al aplicar el Blueprint y, una vez creado mediante *Manual Sync*, dejó la
+variable sin resolver, con lo que `/api` devolvía `502` de forma inmediata.
+
+**Si Render reasigna el dominio del backend, hay que actualizar esa línea.** El
+síntoma es un `502` instantáneo en `/api` mientras el frontend sigue sirviendo
+la aplicación con normalidad.
+
 ### Estado de verificación
 
-Lo que se ha comprobado ejecutándolo en local:
+Comprobado **contra el despliegue real en Render**, a través del dominio del
+frontend (es decir, atravesando el proxy `/api`):
 
-- El backend arranca y sirve la API recibiendo **únicamente** `DATABASE_URL` en
-  formato libpq, sin `SPRING_DATASOURCE_*`.
-- Nginx normaliza `BACKEND_URL` sin esquema a `https://…` y genera una
-  configuración válida; con esquema explícito la respeta sin tocarla.
-- El stack de `docker-compose` sigue funcionando sin regresiones tras estos
-  cambios.
+| Prueba | Resultado |
+|---|---|
+| `/`, `/wishlist`, `/catalog` | `200` — incluido el fallback de rutas de Angular |
+| `/api/products` vía proxy | `200` con el catálogo real |
+| Login del usuario demo | `200` con JWT |
+| Login con contraseña incorrecta | `403` |
+| Wishlist: `GET` / `POST` / `PUT` / `DELETE` | `200` / `201` / `200` / `204` |
+| Histórico | `200` |
+| Petición sin token | `403` |
+| Producto sin stock | `outOfStock: true`, `"Sin stock disponible"` |
 
-Lo que **no** se ha ejecutado: el despliegue real en Render. La sintaxis del
-Blueprint (`fromDatabase`, `fromService`) no se ha validado contra la
-plataforma.
+La base de datos se sembró sola: las tablas y los 15 productos aparecieron sin
+ejecutar ningún script a mano contra la base gestionada.
+
+Comprobado además en local, antes de desplegar:
+
+- El backend arranca contra un PostgreSQL **vacío** recibiendo únicamente
+  `DATABASE_URL`, y en un segundo arranque no duplica filas ni borra los datos
+  creados por el usuario.
+- Nginx normaliza `BACKEND_URL` sin esquema y respeta la que ya lo trae.
+- El stack de `docker-compose` sigue sin regresiones tras estos cambios.
+
+---
+
 ## CORS y `apiUrl` del frontend
 
 En local todo encaja: Angular sirve en `http://localhost:4200` y `SecurityConfig`
@@ -564,6 +609,9 @@ Convención de mensajes: [Conventional Commits](https://www.conventionalcommits.
 | Backend en bucle de reinicio en Railway | `SPRING_DATASOURCE_URL` mal formada (se usó `DATABASE_URL`) | Construirla desde las variables `PG*` como se indica en el paso 4 |
 | `Blocked by CORS policy` en el navegador | El dominio del frontend no está en `allowedOrigins` | Aplicar la opción A (proxy Nginx) o la opción B |
 | `403` en `/api/auth/login` y `Empty encoded password` en los logs | La contraseña del usuario está en texto plano en la BD, no como hash BCrypt | Reinsertar el usuario con el hash. Si es el seed: `docker compose down -v && docker compose up -d` para recargar `db/data.sql` |
+| En Render, `502` **inmediato** en `/api` mientras el frontend sí carga | `BACKEND_URL` apunta a un dominio que ya no existe o llegó vacía | Actualizar `BACKEND_URL` en `render.yaml` con el dominio actual del backend y redesplegar el frontend. Un `502` lento sería otra cosa: arranque en frío |
+| En Render, el backend en `failed` con `Schema-validation: missing table` | La autosiembra no se ejecutó: falta `db/cloud-init.sql` en la imagen o `SPRING_DATASOURCE_URL` venía ya definida | Revisar en los logs las líneas `[entrypoint]`: deben aparecer la traducción de `DATABASE_URL` y `autosiembra activada` |
+| Tras aplicar el Blueprint falta algún servicio | Render no llegó a crearlo | **Blueprints → Manual Sync** para releer `render.yaml` |
 | `401` en `/api/wishlist` | Falta o expiró el JWT | Volver a iniciar sesión; revisar `JWT_EXPIRATION_MS` |
 | Healthcheck de Railway agotado | El arranque tarda más que `healthcheckTimeout` | Subir `healthcheckTimeout` en `railway.toml` |
 | `404` al recargar una ruta de Angular | Falta el fallback de SPA | Ya resuelto por `try_files $uri $uri/ /index.html` en `nginx/default.conf.template` |
