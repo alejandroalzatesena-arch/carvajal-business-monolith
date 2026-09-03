@@ -36,6 +36,9 @@ COPY --from=build /build/target/*.jar /app/app.jar
 # El entrypoint traduce DATABASE_URL (formato libpq de Render/Heroku/Fly) a la
 # URL JDBC y las credenciales que espera Spring. Ver docker-entrypoint.sh.
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+# Inicializacion idempotente para la nube. Solo se ejecuta si la plataforma
+# define SPRING_SQL_INIT_MODE=always (ver render.yaml); en local no se usa.
+COPY db/cloud-init.sql /app/db/cloud-init.sql
 RUN chmod +x /app/docker-entrypoint.sh && chown -R spring:spring /app
 USER spring
 
