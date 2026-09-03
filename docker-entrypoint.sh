@@ -42,6 +42,21 @@ if [ -z "${SPRING_DATASOURCE_URL:-}" ] && [ -n "${DATABASE_URL:-}" ]; then
     export SPRING_DATASOURCE_URL="jdbc:postgresql://${hostpart}"
 
     echo "[entrypoint] SPRING_DATASOURCE_URL derivada de DATABASE_URL"
+
+    # Estamos en una plataforma con base de datos gestionada, que se entrega
+    # vacia. Como el backend arranca con ddl-auto=validate y no crea tablas,
+    # se activa aqui la inicializacion por script: asi no depende de que la
+    # plataforma haya aplicado estas variables de entorno.
+    #
+    # cloud-init.sql es idempotente (IF NOT EXISTS / ON CONFLICT DO NOTHING),
+    # de modo que repetirlo en cada arranque no destruye ni duplica datos.
+    # Una configuracion explicita del operador siempre tiene prioridad.
+    if [ -z "${SPRING_SQL_INIT_MODE:-}" ] && [ -f /app/db/cloud-init.sql ]; then
+        export SPRING_SQL_INIT_MODE="always"
+        : "${SPRING_SQL_INIT_SCHEMA_LOCATIONS:=file:/app/db/cloud-init.sql}"
+        export SPRING_SQL_INIT_SCHEMA_LOCATIONS
+        echo "[entrypoint] autosiembra activada con /app/db/cloud-init.sql"
+    fi
 fi
 
 # PORT lo inyecta la plataforma (Render, Railway); 8080 en local.
