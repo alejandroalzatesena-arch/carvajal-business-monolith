@@ -3,11 +3,19 @@
     <div class="catalog-header">
       <div>
         <h1>Catálogo</h1>
-        <p class="subtitle">{{ filteredProducts.length }} productos disponibles</p>
+        <p class="subtitle">{{ rangeLabel }}</p>
       </div>
       <mat-form-field appearance="outline" class="search-field">
         <mat-icon matPrefix>search</mat-icon>
-        <input matInput placeholder="Buscar productos..." [(ngModel)]="search">
+        <input matInput placeholder="Buscar productos..." [(ngModel)]="search"
+               (keyup.enter)="onSearch()">
+        <button *ngIf="search" matSuffix mat-icon-button aria-label="Limpiar búsqueda"
+                (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+        <button matSuffix mat-flat-button color="accent" class="search-btn" (click)="onSearch()">
+          Buscar
+        </button>
       </mat-form-field>
     </div>
 
@@ -16,16 +24,18 @@
       <p>Cargando productos...</p>
     </div>
 
-    <div *ngIf="!loading && filteredProducts.length === 0" class="state-block">
+    <div *ngIf="!loading && products.length === 0" class="state-block">
       <mat-icon>search_off</mat-icon>
       <p>No se encontraron productos.</p>
     </div>
 
-    <div class="row" *ngIf="!loading">
-      <div class="col-lg-3 col-md-6" *ngFor="let product of filteredProducts">
+    <div class="row" *ngIf="!loading && products.length > 0">
+      <div class="col-lg-3 col-md-6" *ngFor="let product of products">
         <div class="product-card">
           <div class="product-media">
-            <img [src]="product.imageUrl || 'assets/images/no-image.png'" [alt]="product.name">
+            <img [src]="product.imageUrl || 'assets/images/no-image.png'"
+                 [alt]="product.name"
+                 (error)="onImageError($event)">
             <span class="stock-pill" [class]="'stock-' + getStockColor(product.stock)">
               {{ getStockLabel(product.stock) }}
             </span>
@@ -44,6 +54,28 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="pagination" *ngIf="!loading && totalPages > 1">
+      <button mat-raised-button [disabled]="first" (click)="goToPage(page - 1)">
+        <mat-icon>chevron_left</mat-icon>
+        Anterior
+      </button>
+
+      <div class="page-numbers">
+        <button mat-mini-fab
+                *ngFor="let p of pages()"
+                [color]="p === page ? 'accent' : 'basic'"
+                [disabled]="p === page"
+                (click)="goToPage(p)">
+          {{ p + 1 }}
+        </button>
+      </div>
+
+      <button mat-raised-button [disabled]="last" (click)="goToPage(page + 1)">
+        Siguiente
+        <mat-icon>chevron_right</mat-icon>
+      </button>
     </div>
   </div>
 </section>

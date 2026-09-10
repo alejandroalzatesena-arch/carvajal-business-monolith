@@ -24,10 +24,14 @@ export class HomeComponent implements OnInit {
   constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
-    this.productService.getCatalog().subscribe({
-      next: (products) => {
-        this.featuredProducts = products.slice(0, 4);
+    this.productService.getCatalog({ page: 0, size: 4 }).subscribe({
+      next: (page) => {
+        this.featuredProducts = page.content;
       }
     });
+  }
+
+  onImageError(event: Event): void {
+    (event.target as HTMLImageElement).src = 'assets/images/no-image.png';
   }
 }
