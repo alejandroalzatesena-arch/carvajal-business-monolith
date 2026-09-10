@@ -3,6 +3,7 @@ package com.carvajalecomers.controller;
 import com.carvajalecomers.dto.ProductPageResponse;
 import com.carvajalecomers.dto.ProductResponse;
 import com.carvajalecomers.entity.Product;
+import com.carvajalecomers.service.CloudinaryService;
 import com.carvajalecomers.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,9 +12,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/products")
@@ -22,9 +25,11 @@ public class ProductController {
     private static final int MAX_PAGE_SIZE = 100;
 
     private final ProductService productService;
+    private final CloudinaryService cloudinaryService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, CloudinaryService cloudinaryService) {
         this.productService = productService;
+        this.cloudinaryService = cloudinaryService;
     }
 
     /**
@@ -47,6 +52,30 @@ public class ProductController {
     public ResponseEntity<ProductResponse> getById(@PathVariable Long id) {
         Product product = productService.getById(id);
         return ResponseEntity.ok(ProductResponse.fromEntity(product));
+    }
+
+    /**
+     * Sube la imagen de un producto a Cloudinary (multipart) y actualiza
+     * product.imageUrl con la URL segura resultante. Si el producto ya tenia
+     * una imagen en Cloudinary, la anterior se elimina.
+     */
+    @PostMapping("/{id}/image")
+    public ResponseEntity<?> uploadImage(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest().body("El archivo de imagen esta vacio");
+        }
+
+        Product product = productService.getById(id);
+        String previousUrl = product.getImageUrl();
+        if (previousUrl != null && previousUrl.contains("cloudinary.com/")) {
+            cloudinaryService.deleteByUrl(previousUrl);
+        }
+
+        String secureUrl = cloudinaryService.upload(file);
+        Product updated = productService.updateImage(id, secureUrl);
+        return ResponseEntity.ok(ProductResponse.fromEntity(updated));
     }
 
     private Pageable buildPageable(int page, int size, String sort) {

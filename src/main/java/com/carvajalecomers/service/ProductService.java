@@ -45,4 +45,13 @@ public class ProductService {
         return productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
     }
+
+    /**
+     * Actualiza la URL de imagen de un producto (ej: tras subirla a Cloudinary).
+     */
+    public Product updateImage(Long id, String imageUrl) {
+        Product product = getById(id);
+        product.setImageUrl(imageUrl);
+        return productRepository.save(product);
+    }
 }
