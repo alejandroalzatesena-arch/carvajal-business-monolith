@@ -477,7 +477,7 @@ frontend (es decir, atravesando el proxy `/api`):
 | `/`, `/wishlist`, `/catalog` | `200` — incluido el fallback de rutas de Angular |
 | `/api/products` vía proxy | `200` con el catálogo real |
 | Login del usuario demo | `200` con JWT |
-| Login con contraseña incorrecta | `403` |
+| Login con contraseña incorrecta | `401` con el mensaje `Bad credentials` |
 | Wishlist: `GET` / `POST` / `PUT` / `DELETE` | `200` / `201` / `200` / `204` |
 | Histórico | `200` |
 | Petición sin token | `403` |
@@ -608,7 +608,7 @@ Convención de mensajes: [Conventional Commits](https://www.conventionalcommits.
 | `Schema-validation: missing table [users]` | La BD está vacía y `ddl-auto=validate` no crea tablas | Cargar `db/schema.sql`. En local: `docker compose down -v && docker compose up -d` |
 | Backend en bucle de reinicio en Railway | `SPRING_DATASOURCE_URL` mal formada (se usó `DATABASE_URL`) | Construirla desde las variables `PG*` como se indica en el paso 4 |
 | `Blocked by CORS policy` en el navegador | El dominio del frontend no está en `allowedOrigins` | Aplicar la opción A (proxy Nginx) o la opción B |
-| `403` en `/api/auth/login` y `Empty encoded password` en los logs | La contraseña del usuario está en texto plano en la BD, no como hash BCrypt | Reinsertar el usuario con el hash. Si es el seed: `docker compose down -v && docker compose up -d` para recargar `db/data.sql` |
+| `401` en `/api/auth/login` y `Empty encoded password` en los logs | La contraseña del usuario está en texto plano en la BD, no como hash BCrypt | Reinsertar el usuario con el hash. Si es el seed: `docker compose down -v && docker compose up -d` para recargar `db/data.sql` |
 | En Render, `502` **inmediato** en `/api` mientras el frontend sí carga | `BACKEND_URL` apunta a un dominio que ya no existe o llegó vacía | Actualizar `BACKEND_URL` en `render.yaml` con el dominio actual del backend y redesplegar el frontend. Un `502` lento sería otra cosa: arranque en frío |
 | En Render, el backend en `failed` con `Schema-validation: missing table` | La autosiembra no se ejecutó: falta `db/cloud-init.sql` en la imagen o `SPRING_DATASOURCE_URL` venía ya definida | Revisar en los logs las líneas `[entrypoint]`: deben aparecer la traducción de `DATABASE_URL` y `autosiembra activada` |
 | Tras aplicar el Blueprint falta algún servicio | Render no llegó a crearlo | **Blueprints → Manual Sync** para releer `render.yaml` |
