@@ -125,6 +125,26 @@
   font-size: 0.8125rem;
 }
 
+.search-btn {
+  --mdc-text-button-container-height: 40px;
+  margin-left: var(--space-1);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-7);
+  flex-wrap: wrap;
+}
+
+.page-numbers {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
 @media (max-width: 767px) {
   .catalog-header { justify-content: flex-start; }
   .search-field { width: 100%; }
