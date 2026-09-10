@@ -15,6 +15,13 @@ export class CatalogComponent implements OnInit {
   products: Product[] = [];
   loading = true;
 
+  page = 0;
+  pageSize = 12;
+  totalElements = 0;
+  totalPages = 0;
+  first = true;
+  last = false;
+
   constructor(
     private productService: ProductService,
     private wishlistService: WishlistService,
@@ -26,10 +33,21 @@ export class CatalogComponent implements OnInit {
     this.loadProducts();
   }
 
-  loadProducts(): void {
-    this.productService.getCatalog().subscribe({
+  loadProducts(page: number = this.page): void {
+    this.loading = true;
+    this.productService.getCatalog({
+      page,
+      size: this.pageSize,
+      q: this.search?.trim() || undefined
+    }).subscribe({
       next: (data) => {
-        this.products = data;
+        this.products = data.content;
+        this.page = data.page;
+        this.pageSize = data.size;
+        this.totalElements = data.totalElements;
+        this.totalPages = data.totalPages;
+        this.first = data.first;
+        this.last = data.last;
         this.loading = false;
       },
       error: () => {
@@ -37,6 +55,31 @@ export class CatalogComponent implements OnInit {
         this.snackBar.open('Error al cargar productos', 'Cerrar', { duration: 3000 });
       }
     });
+  }
+
+  onSearch(): void {
+    this.loadProducts(0);
+  }
+
+  clearSearch(): void {
+    this.search = '';
+    this.loadProducts(0);
+  }
+
+  goToPage(page: number): void {
+    if (page < 0 || page >= this.totalPages || page === this.page) return;
+    this.loadProducts(page);
+  }
+
+  pages(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i);
+  }
+
+  get rangeLabel(): string {
+    if (this.totalElements === 0) return '0 productos';
+    const from = this.page * this.pageSize + 1;
+    const to = this.last ? this.totalElements : (this.page + 1) * this.pageSize;
+    return `${from}-${to} de ${this.totalElements} productos`;
   }
 
   addToWishlist(product: Product): void {
@@ -55,15 +98,6 @@ export class CatalogComponent implements OnInit {
     });
   }
 
-  get filteredProducts(): Product[] {
-    if (!this.search) return this.products;
-    const term = this.search.toLowerCase();
-    return this.products.filter(p =>
-      p.name.toLowerCase().includes(term) ||
-      p.category.toLowerCase().includes(term)
-    );
-  }
-
   getStockLabel(stock: number): string {
     if (stock === 0) return 'Sin stock';
     if (stock <= 5) return `Últimas ${stock} unidades`;
@@ -74,5 +108,9 @@ export class CatalogComponent implements OnInit {
     if (stock === 0) return 'warn';
     if (stock <= 5) return 'accent';
     return 'primary';
+  }
+
+  onImageError(event: Event): void {
+    (event.target as HTMLImageElement).src = 'assets/images/no-image.png';
   }
 }

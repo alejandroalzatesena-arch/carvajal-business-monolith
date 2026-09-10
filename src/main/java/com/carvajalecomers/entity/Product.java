@@ -31,7 +31,7 @@ public class Product {
     @Column(name = "stock", nullable = false)
     private Integer stock;
 
-    @Column(name = "image_url", length = 300)
+    @Column(name = "image_url", length = 500)
     private String imageUrl;
 
     @Column(name = "category", length = 80)

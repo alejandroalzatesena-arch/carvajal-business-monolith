@@ -10,8 +10,9 @@ stock e histórico de actividad, con autenticación JWT.
 | Seguridad | Spring Security + JWT (jjwt 0.12.6) |
 | Base de datos | PostgreSQL 16 |
 | Frontend | Angular 17 + Angular Material |
+| Imágenes de producto | Cloudinary (`cloudinary-http44`) |
 | Contenedores | Docker (multi-stage) + Docker Compose |
-| Despliegue | Railway (PostgreSQL **gestionado** + 2 servicios Docker) |
+| Despliegue | Railway (PostgreSQL **gestionado** + 2 servicios Docker) · Render (Blueprint) |
 
 ---
 
@@ -32,17 +33,18 @@ stock e histórico de actividad, con autenticación JWT.
 carvajal-business-monolith/
 ├── src/                              # Backend Spring Boot (com.carvajalecomers)
 │   ├── main/java/com/carvajalecomers/
+│   │   ├── config/                   # CloudinaryConfig (bean a partir de env vars)
 │   │   ├── controller/               # AuthController, ProductController, WishlistController
-│   │   ├── dto/                      # Requests y responses de la API
+│   │   ├── dto/                      # Requests y responses de la API (incl. ProductPageResponse)
 │   │   ├── entity/                   # User, Product, Wishlist, WishlistItem, WishlistHistory
 │   │   ├── repository/               # Repositorios JPA
 │   │   ├── security/                 # SecurityConfig, filtro y provider JWT
-│   │   └── service/                  # Lógica de negocio
+│   │   └── service/                  # Lógica de negocio (incl. CloudinaryService)
 │   └── main/resources/application.properties
 │
 ├── db/
 │   ├── schema.sql                    # DDL: tablas, FKs, índices
-│   ├── data.sql                      # Datos de prueba (1 usuario + 15 productos)
+│   ├── data.sql                      # Datos de prueba (1 usuario + 48 productos)
 │   ├── cloud-init.sql                # Igual, pero idempotente, para la nube [DevOps]
 │   └── MODELO_BASE_DATOS.md          # Diagrama ER y explicación del modelo
 │
@@ -194,24 +196,183 @@ ng serve
 |--------|------|------|-------------|
 | `POST` | `/api/auth/register` | Público | Registro de usuario |
 | `POST` | `/api/auth/login` | Público | Login → devuelve el JWT |
-| `GET` | `/api/products` | Público | Catálogo de productos |
+| `GET` | `/api/products?page=0&size=12` | Público | Catálogo **paginado** (server-side) |
 | `GET` | `/api/products/{id}` | Público | Detalle de un producto |
+| `POST` | `/api/products/{id}/image` | Público* | Subir imagen a Cloudinary (multipart) y actualizar `imageUrl` |
 | `GET` | `/api/wishlist` | JWT | Items de la lista de deseos |
 | `POST` | `/api/wishlist/items` | JWT | Agregar producto |
 | `PUT` | `/api/wishlist/items/{productId}` | JWT | Actualizar cantidad deseada |
 | `DELETE` | `/api/wishlist/items/{productId}` | JWT | Eliminar producto |
 | `GET` | `/api/wishlist/history` | JWT | Histórico de la wishlist |
 
+\* El endpoint de imagen queda bajo `/api/products/**` (permitido sin JWT por
+`SecurityConfig`). Si se va a exponer en producción a usuarios no administradores,
+se recomienda restringirlo a `ROLE_ADMIN` en `SecurityConfig` y protegerlo con JWT.
+
 Las rutas con JWT requieren la cabecera `Authorization: Bearer <token>`
 (el interceptor de Angular la añade automáticamente).
 
-Prueba rápida:
+Prueba rápida del catálogo paginado:
 
 ```bash
-curl -s http://localhost:8080/api/products | head -c 300
+curl -s "http://localhost:8080/api/products?page=0&size=12" | head -c 300
 ```
 
 ---
+
+## Catálogo ampliado (seed)
+
+`db/data.sql` y `db/cloud-init.sql` siembran **48 productos** repartidos en
+**9 categorías**, para que la paginación se vea y se pruebe bien:
+
+| Categoría | Productos | Categoría | Productos |
+|-----------|-----------|-----------|-----------|
+| Portatiles | 8 | Accesorios | 7 |
+| Monitores | 6 | Software | 4 |
+| Teclados y mouse | 7 | Redes | 3 |
+| Componentes | 9 | Almacenamiento externo | 2 |
+| Escritorio | 2 | | |
+
+Con `size=12` el catálogo da exactamente **4 páginas**.
+
+Detalles de diseño:
+
+- Nombres y descripciones realistas y distintos entre sí.
+- Precios variados y stocks variados (altos, bajos y medios).
+- **9 productos con `stock = 0`** (ids 5, 11, 18, 23, 27, 33, 38, 40 y 47),
+  a propósito, para probar la notificación de *"sin stock"* de la wishlist.
+- `image_url` usa placeholders temporales (`picsum.photos`) que se reemplazan
+  después subiendo la imagen real a Cloudinary (ver sección siguiente).
+- `active = true` en todos.
+- Las secuencias se resincronizan con `setval` al final del script.
+
+---
+
+## Paginación del catálogo (server-side)
+
+`GET /api/products` ahora devuelve una **página** calculada en el backend con
+Spring Data `Pageable`/`Page<Product>`; el frontend **no carga el catálogo
+completo** de una vez.
+
+### Parámetros
+
+| Parámetro | Default | Descripción |
+|-----------|---------|-------------|
+| `page` | `0` | Índice de página (0-based) |
+| `size` | `12` | Tamaño de página (máx. `100`) |
+| `sort` | `id,asc` | Ej: `name,asc`, `price,desc`, `category,asc` |
+| `category` | — | Filtro por categoría (case-insensitive) |
+| `q` | — | Búsqueda por nombre (case-insensitive, contiene) |
+
+### Ejemplo
+
+```bash
+GET /api/products?page=1&size=12&category=Portatiles&q=HP
+```
+
+### Estructura de la respuesta
+
+```json
+{
+  "content": [ /* ProductResponse[] de esta página */ ],
+  "page": 0,
+  "size": 12,
+  "totalElements": 48,
+  "totalPages": 4,
+  "first": true,
+  "last": false
+}
+```
+
+- `content`: productos de la página actual.
+- `totalElements` / `totalPages`: metadatos para los controles de paginación.
+- `first` / `last`: para habilitar/deshabilitar *Anterior* / *Siguiente*.
+
+`GET /api/products/{id}` no cambia: sigue devolviendo un único
+`ProductResponse`.
+
+### Uso en el frontend
+
+- `core/services/product.service.ts` expone `getCatalog({ page, size, sort,
+  category, q })` → `ProductPage` (`content, page, size, totalElements,
+  totalPages, first, last`) y `uploadImage(id, file)`.
+- El catálogo (`pages/catalog`) consume `page/size` por request y muestra
+  controles **Anterior / Siguiente + números de página**, además de la
+  etiqueta `1-12 de 48 productos`.
+- La búsqueda (`q`) y el futuro filtro por categoría se resuelven en el
+  servidor, no en el cliente.
+
+---
+
+## Cloudinary (imágenes de producto)
+
+**Qué se usa y para qué:** las imágenes de los productos se suben a
+[Cloudinary](https://cloudinary.com), un CDN de imágenes, y se guarda en
+`products.image_url` la URL segura (`secure_url`) que devuelve la subida. El
+catálogo y la home la muestran directamente; si una imagen falla al cargar, el
+frontend muestra el placeholder `assets/images/no-image.png`. La columna
+`image_url` se amplió a `VARCHAR(500)` para URLs con transformaciones largas.
+
+**Dependencia:** `com.cloudinary:cloudinary-http44:1.39.0` en `pom.xml`.
+
+### Variables de entorno (solo por env, nunca en el repo)
+
+| Variable | Propiedad Spring | Ejemplo |
+|----------|-----------------|---------|
+| `CLOUDINARY_CLOUD_NAME` | `cloudinary.cloud-name` | `mi-carrito-demo` |
+| `CLOUDINARY_API_KEY` | `cloudinary.api-key` | `123456789012345` |
+| `CLOUDINARY_API_SECRET` | `cloudinary.api-secret` | (secreto) |
+
+`application.properties` las mapea así:
+
+```properties
+cloudinary.cloud-name=${CLOUDINARY_CLOUD_NAME:}
+cloudinary.api-key=${CLOUDINARY_API_KEY:}
+cloudinary.api-secret=${CLOUDINARY_API_SECRET:}
+```
+
+> **Regla de seguridad:** los secretos viajan **solo** por variables de entorno.
+> No se suben al frontend ni al repositorio. `CloudinaryConfig` construye el bean
+> con lo que llegue por env; si el endpoint de subida falla, revisa que las tres
+> variables estén definidas.
+
+**En local:**
+
+```bash
+# PowerShell
+$env:CLOUDINARY_CLOUD_NAME="mi-cloud"; $env:CLOUDINARY_API_KEY="..."; $env:CLOUDINARY_API_SECRET="..."
+.\mvnw.cmd spring-boot:run
+
+# bash (WSL/macOS/Linux)
+export CLOUDINARY_CLOUD_NAME=mi-cloud CLOUDINARY_API_KEY=... CLOUDINARY_API_SECRET=...
+./mvnw spring-boot:run
+```
+
+**En Render:** Dashboard → servicio `carvajal-backend` → **Environment** →
+añadir las tres variables; luego **Manual Deploy → Deploy latest commit**
+(ver sección de despliegue).
+
+### Subir una imagen
+
+```bash
+curl -X POST "http://localhost:8080/api/products/1/image" \
+     -H "Authorization: Bearer <JWT>" \
+     -F "file=@/ruta/a/imagen.jpg"
+```
+
+Respuesta: el `ProductResponse` del producto ya con `imageUrl` apuntando a la
+URL segura de Cloudinary. Si el producto ya tenía una imagen en Cloudinary, la
+anterior se elimina automáticamente (método opcional `deleteByUrl` de
+`CloudinaryService`). El límite multipart está en 10 MB
+(`spring.servlet.multipart.*`).
+
+**Flujo actual:** la infraestructura está lista y funcional (config + servicio +
+endpoint). Las imágenes reales se suben después, manualmente, con el curl
+anterior o desde el frontend una vez que se exponga un selector de archivo en
+el panel de administración.
+
+---
+
 ## Variables de entorno
 
 `application.properties` trae valores por defecto para desarrollo local. En
@@ -229,6 +390,9 @@ propiedades con variables de entorno gracias al *relaxed binding* de Spring Boot
 | `SPRING_JPA_HIBERNATE_DDL_AUTO` | `spring.jpa.hibernate.ddl-auto` | `validate` | No (default `validate`) |
 | `JWT_SECRET` | `jwt.secret` | clave Base64 de 32 bytes o más (HS256) | Sí |
 | `JWT_EXPIRATION_MS` | `jwt.expiration-ms` | `86400000` (24 h) | Sí |
+| `CLOUDINARY_CLOUD_NAME` | `cloudinary.cloud-name` | `mi-carrito-demo` | Solo para subir imágenes |
+| `CLOUDINARY_API_KEY` | `cloudinary.api-key` | `123456789012345` | Solo para subir imágenes |
+| `CLOUDINARY_API_SECRET` | `cloudinary.api-secret` | (secreto) | Solo para subir imágenes |
 | `PORT` | puerto del servidor HTTP | `8080` | Lo inyecta Railway |
 | `JAVA_OPTS` | flags de la JVM | `-XX:MaxRAMPercentage=75.0` | No |
 
@@ -467,6 +631,36 @@ variable sin resolver, con lo que `/api` devolvía `502` de forma inmediata.
 síntoma es un `502` instantáneo en `/api` mientras el frontend sigue sirviendo
 la aplicación con normalidad.
 
+### Cloudinary en Render
+
+Para que `POST /api/products/{id}/image` funcione en producción, añade las tres
+variables al servicio `carvajal-backend`:
+
+- Dashboard → **carvajal-backend → Environment** → *Environment variables*.
+- `CLOUDINARY_CLOUD_NAME`: el cloud name de tu cuenta Cloudinary.
+- `CLOUDINARY_API_KEY`: key de la cuenta (Dashboard → *API Keys* de Cloudinary).
+- `CLOUDINARY_API_SECRET`: **secret** (márcala como secret para que Render no la
+  muestre en claro).
+- Guarda y dispara el redeploy.
+
+> Mientras esas variables no estén definidas, el catálogo y la paginación
+> funcionan con normalidad (las imágenes siguen siendo los placeholders del
+> seed); solo el endpoint de subida responderá con error.
+
+### Redeploy tras estos cambios (paginación + Cloudinary + seed)
+
+1. Sube la rama `feature/cloudinary-pagination-products` a GitHub y, si vas a
+   desplegar directamente desde ella, cambia el campo **Branch** del Blueprint
+   (o haz merge a `main` y deja `main`, que es lo habitual).
+2. El backend **autosiembra** el esquema al arrancar (`db/cloud-init.sql`):
+   los 48 productos nuevos se insertan con `ON CONFLICT DO NOTHING`, así que un
+   redeploy **no duplicará** filas sobre una base ya sembrada.
+3. Dashboard → **carvajal-backend → Manual Deploy → Deploy latest commit** y lo
+   mismo con **carvajal-frontend** (si cambió el build de Angular).
+4. Añade las variables de Cloudinary apuntadas arriba **antes** del redeploy del
+   backend si ya tienes cuenta de Cloudinary.
+5. Verifica con las [pruebas rápidas](#pruebas-rápidas) de abajo.
+
 ### Estado de verificación
 
 Comprobado **contra el despliegue real en Render**, a través del dominio del
@@ -483,8 +677,9 @@ frontend (es decir, atravesando el proxy `/api`):
 | Petición sin token | `403` |
 | Producto sin stock | `outOfStock: true`, `"Sin stock disponible"` |
 
-La base de datos se sembró sola: las tablas y los 15 productos aparecieron sin
-ejecutar ningún script a mano contra la base gestionada.
+La base de datos se sembró sola: las tablas y los 48 productos aparecieron sin
+ejecutar ningún script a mano contra la base gestionada. Con `size=12` el
+catálogo queda en **4 páginas**.
 
 Comprobado además en local, antes de desplegar:
 
@@ -493,6 +688,60 @@ Comprobado además en local, antes de desplegar:
   creados por el usuario.
 - Nginx normaliza `BACKEND_URL` sin esquema y respeta la que ya lo trae.
 - El stack de `docker-compose` sigue sin regresiones tras estos cambios.
+- `GET /api/products` devuelve el payload paginado (`content`, `page`, `size`,
+  `totalElements`, `totalPages`, `first`, `last`).
+
+---
+
+## Pruebas rápidas
+
+Con la API en `http://localhost:8080` (o el dominio del backend en Render):
+
+### 1. Paginación del catálogo
+
+```bash
+# Página 0 (default): 12 productos
+curl -s "http://localhost:8080/api/products?page=0&size=12" | head -c 400
+
+# Página 1 — debería devolver otros 12 y "page": 1, "first": false
+curl -s "http://localhost:8080/api/products?page=1&size=12"
+
+# Con filtros
+curl -s "http://localhost:8080/api/products?page=0&size=12&category=Portatiles"
+curl -s "http://localhost:8080/api/products?q=teclado&page=0&size=12"
+```
+
+Comprueba que **`totalPages` > 1** y que con 48 productos y `size=12`
+`totalPages` es exactamente 4. También funcionan `sort=price,desc`,
+`sort=name,asc`, etc.
+
+### 2. Detalle (sin cambios)
+
+```bash
+curl -s "http://localhost:8080/api/products/1"
+```
+
+### 3. Productos sin stock (wishlist)
+
+Los ids 5, 11, 18, 23, 27, 33, 38, 40 y 47 tienen `stock = 0`. Agréguelos a la
+wishlist y verifique que el `WishlistItemResponse` llega con
+`outOfStock: true` y el aviso `"Sin stock disponible"` en la UI:
+
+```bash
+curl -s "http://localhost:8080/api/products?page=0&size=12&q=MSI"   # id 18, stock 0
+```
+
+### 4. Carga de imagen (requiere cuenta Cloudinary)
+
+```bash
+curl -X POST "http://localhost:8080/api/products/1/image" \
+     -F "file=@/ruta/a/imagen.jpg"
+```
+
+Con las variables `CLOUDINARY_*` bien definidas debe devolver el producto con
+`imageUrl` empezando por `https://res.cloudinary.com/...`. Pega esa URL en el
+navegador para confirmar que sirve. Sin variables, el endpoint responde con
+error (esperado).
 
 ---
 
